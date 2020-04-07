@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Container, Text ,Button,Content,Form,Input,Root,Header,Body,Title,Item as FormItem,Label} from 'native-base';
+import { Container, Text ,Button,Content,Form,Input,Root,Header,Body,Title,Item as FormItem,Label,Toast} from 'native-base';
 import {
   StyleSheet 
 } from 'react-native';
@@ -8,6 +8,8 @@ import {
 import Constants from 'expo-constants';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import LogoutScreen from './logout';
+import auth from '@react-native-firebase/auth';
 
 
 function HomeScreen() {
@@ -25,6 +27,20 @@ function SettingsScreen() {
     </Container>
   );
 }
+
+const logout = async () => {
+	try {
+		await auth().signOut()
+		Toast.show({text:"Successfully Logged Out",buttonText:"Okay",duration:750})
+	}
+
+	catch(error) {
+			Toast.show({text:error.toString().split("Error:")[1].trim(),buttonText:"Okay",duration:3000})
+			console.log(error)
+	}
+}
+
+
 
 const Tab = createBottomTabNavigator();
 
@@ -48,6 +64,9 @@ class Home extends Component {
 	            } else if (route.name === 'Settings') {
 	              iconName = focused ? 'ios-list-box' : 'ios-list';
 	            }
+	            else if (route.name == "Logout") {
+	            	iconName = 'logout'
+	            }
 
 	            // You can return any component that you like here!
 	            return <Ionicons name={iconName} size={size} color={color} />;
@@ -60,6 +79,12 @@ class Home extends Component {
 			>
 		        <Tab.Screen name="Home" component={HomeScreen} />
 		        <Tab.Screen name="Settings" component={SettingsScreen} />
+		        <Tab.Screen name="Logout" component={LogoutScreen} 
+		        			listeners={{ tabPress: e => {
+		        							console.log(e)
+		        							logout()
+		        						} }}
+		        />
 	      	</Tab.Navigator>
 		)
 	}

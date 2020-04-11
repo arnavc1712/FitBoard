@@ -9,6 +9,7 @@ import Constants from 'expo-constants';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LogoutScreen from './logout';
+import viewMaps from './viewMaps';
 import auth from '@react-native-firebase/auth';
 
 
@@ -77,7 +78,7 @@ class Home extends Component {
 	          inactiveTintColor: 'gray',
 	        }}
 			>
-		        <Tab.Screen name="Home" component={HomeScreen} />
+		        <Tab.Screen name="Home" component={viewMaps} />
 		        <Tab.Screen name="Settings" component={SettingsScreen} />
 		        <Tab.Screen name="Logout" component={LogoutScreen} 
 		        			listeners={{ tabPress: e => {

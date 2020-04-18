@@ -11,6 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import LogoutScreen from './logout';
 import viewMaps from './viewMaps';
 import auth from '@react-native-firebase/auth';
+import pedoMeter from './pedoMeter';
 
 
 function HomeScreen() {
@@ -79,6 +80,7 @@ class Home extends Component {
 	        }}
 			>
 		        <Tab.Screen name="Home" component={viewMaps} />
+						<Tab.Screen name="Pedometer" component={pedoMeter}/>
 		        <Tab.Screen name="Settings" component={SettingsScreen} />
 		        <Tab.Screen name="Logout" component={LogoutScreen} 
 		        			listeners={{ tabPress: e => {

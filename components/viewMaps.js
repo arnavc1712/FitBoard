@@ -3,9 +3,6 @@ import {View,StyleSheet,Image} from 'react-native';
 import React, {Component} from 'react';
 import {Container,Text,Content,Header, Icon, Picker, Form,Button,Item,Input} from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
-// import firestore from '@react-native-firebase/firestore';
-
-import firebase from '@react-native-firebase/app';
 import MapViewDirections from 'react-native-maps-directions';
 import configs from "../conf.json"
 

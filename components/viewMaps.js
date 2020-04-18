@@ -7,6 +7,7 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 
 import firebase from '@react-native-firebase/app';
 import MapViewDirections from 'react-native-maps-directions';
+import configs from "../conf.json"
 
 const origin = {latitude: 33.419734999999996, longitude: -111.9164663};
 const destination = {latitude: 33.4154404, longitude: -111.9155886};
@@ -95,7 +96,7 @@ const ViewMaps = () => {
           <MapViewDirections
             origin={origin}
             destination={destination}
-            apikey="AIzaSyBMV8iHwK-7GW_xUtoBn0uICBvJsrXeXJI"
+            apikey={configs["mapsDirectionsKey"]}
             strokeWidth={3}
             strokeColor="hotpink"
           />

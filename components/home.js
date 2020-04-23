@@ -10,24 +10,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LogoutScreen from './logout';
 import viewMaps from './viewMaps';
+import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
 
 
-function HomeScreen() {
-  return (
-    <Container style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </Container>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <Container style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </Container>
-  );
-}
 
 const logout = async () => {
 	try {
@@ -62,7 +48,7 @@ class Home extends Component {
 	              iconName = focused
 	                ? 'ios-information-circle'
 	                : 'ios-information-circle-outline';
-	            } else if (route.name === 'Settings') {
+	            } else if (route.name === 'MenuStack') {
 	              iconName = focused ? 'ios-list-box' : 'ios-list';
 	            }
 	            else if (route.name == "Logout") {
@@ -78,8 +64,8 @@ class Home extends Component {
 	          inactiveTintColor: 'gray',
 	        }}
 			>
-		        <Tab.Screen name="Home" component={viewMaps} />
-		        <Tab.Screen name="Settings" component={SettingsScreen} />
+						<Tab.Screen name="MenuStack" component={MenuStack} />
+		        <Tab.Screen name="Maps" component={viewMaps} />
 		        <Tab.Screen name="Logout" component={LogoutScreen} 
 		        			listeners={{ tabPress: e => {
 		        							console.log(e)

@@ -1,10 +1,11 @@
-import React, {Component,useState} from 'react';
+import React, {Component,useState,useEffect} from 'react';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import {Button,Text,Toast} from 'native-base'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { View,StyleSheet } from 'react-native';
 import DestinationPicker from './destinationPicker';
 import EventDetailPicker from './eventDetailPicker';
+import GetLocation from 'react-native-get-location'
 
 
 const defaultScrollViewProps = {
@@ -26,7 +27,21 @@ const Wizard = () => {
     const [currLocation, setCurrLocation] = useState({latitude:38.4214278,longitude:-111.9185674})
     const [startLocation, setStartLocation] = useState('')
 
-   
+    useEffect(() => {
+        const getCurrPos = async () => {
+            try{
+                
+                const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
+                let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
+                setCurrLocation(coordObj)
+                animate(coordObj);
+            }
+            catch(error){
+                console.log(error)
+            }
+        }
+        getCurrPos();
+      },[]);
 
     const onDateNext = () => {
         if (date==null || event==null || distance==null){

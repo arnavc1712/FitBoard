@@ -2,12 +2,12 @@ import React, {Component,useState, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
 import {Container} from 'native-base'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import configs from "../conf.json"
+import configs from "../../conf.json"
 // import Geolocation from '@react-native-community/geolocation';
 navigator.geolocation = require('@react-native-community/geolocation')
 import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from 'react-native-maps';
 import { Col, Row, Grid } from "react-native-easy-grid";
-import GetLocation from 'react-native-get-location'
+
 
 
 // var getPosition = function () {
@@ -39,22 +39,6 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
     const [marker,setMarker] = useState()
     
 
-    useEffect(() => {
-        const getCurrPos = async () => {
-            try{
-                const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
-                let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
-                setCurrLocation(coordObj)
-                animate(coordObj);
-            }
-            catch(error){
-                console.log(error)
-            }
-        }
-        
-        getCurrPos();
-      },[map,marker]);
-    
 
     const animate = (newCoordinates) => {
  
@@ -78,6 +62,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
     return (<Grid>
         <Row size={5} >
             <MapView
+                key={1}
                 showUserLocation={true}
                 ref={(map) => { setMap(map); }}
                 customMapStyle={mapStyle}

@@ -5,7 +5,7 @@ import {View,StyleSheet,Image} from 'react-native';
 import Constants from 'expo-constants';
 import { createStackNavigator } from '@react-navigation/stack';
 import Menu from "./menu"
-import Wizard from './wizard'
+import Wizard from './wizard/wizard'
 const Stack = createStackNavigator();
 
 

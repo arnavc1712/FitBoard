@@ -33,23 +33,18 @@ const mapStyle = [
     }
 ]
 
-const DestinationPicker = () => {
+const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartLocation}) => {
 
-    const [currLocation, setCurrLocation] = useState({latitude:38.4214278,longitude:-111.9185674})
     const [map,setMap] = useState()
     const [marker,setMarker] = useState()
     
 
     useEffect(() => {
-        // Update the document title using the browser API
         const getCurrPos = async () => {
             try{
                 const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
-                
                 let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
-                
                 setCurrLocation(coordObj)
-        
                 animate(coordObj);
             }
             catch(error){
@@ -113,12 +108,12 @@ const DestinationPicker = () => {
                 returnKeyType={'default'}
                 fetchDetails={true}
                 onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                    let name = null;
+                    // let name = null;
                     if ("description" in data){
-                        name = data["description"].split(",")[0]
+                        setStartLocation(data["description"].split(",")[0])
                     }
                     else{
-                        name = data["name"].split(",")[0]
+                        setStartLocation(data["name"].split(",")[0])
                     }
                     let coordObj = {latitude:details["geometry"]["location"]["lat"],longitude:details["geometry"]["location"]["lng"]};
                     animate(coordObj);

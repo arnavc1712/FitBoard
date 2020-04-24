@@ -103,7 +103,10 @@ const Wizard = () => {
                 </ProgressStep>
                 <ProgressStep label="Second Step" scrollViewProps={defaultScrollViewProps}>
                     {/* <View style={{ alignItems: 'center' }}> */}
-                        <DestinationPicker/>
+                        <DestinationPicker
+                            distance={distance}
+                        
+                        />
                     {/* </View> */}
                 </ProgressStep>
                 <ProgressStep label="Third Step" scrollViewProps={defaultScrollViewProps}>

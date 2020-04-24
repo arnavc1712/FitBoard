@@ -34,18 +34,14 @@ const mapStyle = [
     }
 ]
 
-const DestinationPicker = (props) => {
+const DestinationPicker = ({distance, currLocation,setCurrLocation,startLocation,setStartLocation}) => {
 
-    const [startLocation, setstartLocation] = useState({latitude:38.4214278,longitude:-111.9185674})
-    const [endLocation, setEndLocation] = useState()
     const [map,setMap] = useState()
     const [marker,setMarker] = useState()
-    const [distance] = props['distance'];
     const [destinationMarker, setDestinationMarkers] = useState();
     
     const [animating, setAnimate] = useState();
     useEffect(() => {
-        // Update the document title using the browser API
         const getCurrPos = async () => {
             try{
                 const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
@@ -54,6 +50,7 @@ const DestinationPicker = (props) => {
                 //Start location if set
                 //Get distance as props
                 console.log(coordObj);
+                setCurrLocation(coordObj)
                 animate(coordObj);
                 console.log(location);
                 getEndPoints(coordObj);
@@ -69,8 +66,7 @@ const DestinationPicker = (props) => {
     
 
     const getEndPoints = async (coordObj) => {
-        let URL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordObj['latitude']},${coordObj['longitude']}&radius=${props['distance'].replace('K', '000')}&key=AIzaSyBMV8iHwK-7GW_xUtoBn0uICBvJsrXeXJI`
-        console.log(URL, props['distance']);
+        let URL = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordObj['latitude']},${coordObj['longitude']}&radius=${distance.replace('K', '000')}&key=AIzaSyBMV8iHwK-7GW_xUtoBn0uICBvJsrXeXJI`
         try{
             await fetch(URL)
             .then((response) => {
@@ -156,43 +152,12 @@ const DestinationPicker = (props) => {
                 returnKeyType={'default'}
                 fetchDetails={true}
                 onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                    let name = null;
+                    // let name = null;
                     if ("description" in data){
-                        name = data["description"].split(",")[0]
+                        setStartLocation(data["description"].split(",")[0])
                     }
                     else{
-                        name = data["name"].split(",")[0]
-                    }
-                    let coordObj = {latitude:details["geometry"]["location"]["lat"],longitude:details["geometry"]["location"]["lng"]};
-                    animate(coordObj);
-                    setstartLocation(coordObj);
-                    
-                }}
-                styles={autocompleteSyles}
-                currentLocation={true}
-                currentLocationLabel="Places around me"
-                query={{
-                    // available options: https://developers.google.com/places/web-service/autocomplete
-                    key: configs["mapsDirectionsKey"],
-                    language: 'en', // language of the results
-                    // types: '(cities)' // default: 'geocode'
-                }}
-            />
-
-            <GooglePlacesAutocomplete
-                placeholder='Enter Location'
-                minLength={2}
-                autoFocus={false}
-                listViewDisplayed={false}
-                returnKeyType={'default'}
-                fetchDetails={true}
-                onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                    let name = null;
-                    if ("description" in data){
-                        name = data["description"].split(",")[0]
-                    }
-                    else{
-                        name = data["name"].split(",")[0]
+                        setStartLocation(data["name"].split(",")[0])
                     }
                     let coordObj = {latitude:details["geometry"]["location"]["lat"],longitude:details["geometry"]["location"]["lng"]};
                     animate(coordObj);

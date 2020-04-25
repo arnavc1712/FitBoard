@@ -37,7 +37,6 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
 
     const [map,setMap] = useState()
     const [marker,setMarker] = useState()
-    
 
 
     const animate = (newCoordinates) => {
@@ -55,7 +54,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 marker["animateMarkerToCoordinate"](newCoordinates, 1000);
             }
             } else {
-                currLocation.timing(newCoordinates).start();
+                currLocation["coords"].timing(newCoordinates).start();
             }
         }
    
@@ -69,8 +68,8 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                 style={styles.map}
                 initialRegion={{
-                latitude: currLocation["latitude"],
-                longitude: currLocation["longitude"],
+                latitude: currLocation["coords"]["latitude"],
+                longitude: currLocation["coords"]["longitude"],
                 latitudeDelta: 0.015,
                 longitudeDelta: 0.0121,
             }}
@@ -80,7 +79,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 ref={mark => { setMarker(mark); }}
                 style={{zIndex:1}}
                 flat={true}
-                coordinate={currLocation}
+                coordinate={currLocation["coords"]}
             />    
             
             </MapView>
@@ -90,19 +89,27 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 minLength={2}
                 autoFocus={false}
                 listViewDisplayed={false}
+                getDefaultValue={() => currLocation["name"]}
                 returnKeyType={'default'}
                 fetchDetails={true}
                 onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
                     // let name = null;
+                    let name = ''
+                    let photo_reference = ''
                     if ("description" in data){
-                        setStartLocation(data["description"].split(",")[0])
+                        photo_reference = details["photos"][0]["photo_reference"]
+                        name = data["description"]
                     }
                     else{
-                        setStartLocation(data["name"].split(",")[0])
+                        photo_reference = data["photos"][0]["photo_reference"]
+                        name = data["name"]
                     }
                     let coordObj = {latitude:details["geometry"]["location"]["lat"],longitude:details["geometry"]["location"]["lng"]};
                     animate(coordObj);
-                    setCurrLocation(coordObj);
+                    setCurrLocation({'coords':coordObj,
+                                     'name':name,
+                                     'photo_reference':photo_reference})
+                    
                     
                 }}
                 styles={autocompleteSyles}

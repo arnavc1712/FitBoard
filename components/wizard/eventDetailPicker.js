@@ -22,7 +22,7 @@ const EventDetailPicker = ({event,setEvent,distance,setDistance,date,setDate}) =
 
     const onChange = (date) => {
         setShow(false)
-        setDate(date)    
+        setDate(date) 
     }
 
     const onCancel = () => {

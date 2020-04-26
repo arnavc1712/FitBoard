@@ -1,0 +1,226 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.fitboard"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="16"
+9        android:targetSdkVersion="28" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/debug/AndroidManifest.xml:5:5-77
+11-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/debug/AndroidManifest.xml:5:22-75
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:4:5-67
+12-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:4:22-64
+13    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+13-->[com.facebook.flipper:flipper:0.33.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/ef811104dee58f4b2e69a9af345add4b/jetified-flipper-0.33.1/AndroidManifest.xml:16:5-76
+13-->[com.facebook.flipper:flipper:0.33.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/ef811104dee58f4b2e69a9af345add4b/jetified-flipper-0.33.1/AndroidManifest.xml:16:22-73
+14    <uses-permission android:name="android.permission.WAKE_LOCK" />
+14-->[:react-native-firebase_auth] /Users/apeksha/Desktop/ccp/FitBoard/node_modules/@react-native-firebase/auth/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:5-68
+14-->[:react-native-firebase_auth] /Users/apeksha/Desktop/ccp/FitBoard/node_modules/@react-native-firebase/auth/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:22-65
+15    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+15-->[:react-native-firebase_auth] /Users/apeksha/Desktop/ccp/FitBoard/node_modules/@react-native-firebase/auth/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-79
+15-->[:react-native-firebase_auth] /Users/apeksha/Desktop/ccp/FitBoard/node_modules/@react-native-firebase/auth/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:22-76
+16    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+16-->[:react-native-maps] /Users/apeksha/Desktop/ccp/FitBoard/node_modules/react-native-maps/lib/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:10:5-81
+16-->[:react-native-maps] /Users/apeksha/Desktop/ccp/FitBoard/node_modules/react-native-maps/lib/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:10:22-78
+17
+18    <uses-feature
+18-->[com.google.android.gms:play-services-maps:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/218b74eaf6e46bfa9995cd448a78cba2/play-services-maps-17.0.0/AndroidManifest.xml:26:5-28:35
+19        android:glEsVersion="0x00020000"
+19-->[com.google.android.gms:play-services-maps:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/218b74eaf6e46bfa9995cd448a78cba2/play-services-maps-17.0.0/AndroidManifest.xml:27:9-41
+20        android:required="true" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+20-->[com.google.android.gms:play-services-maps:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/218b74eaf6e46bfa9995cd448a78cba2/play-services-maps-17.0.0/AndroidManifest.xml:28:9-32
+21    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+21-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:26:5-82
+21-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:26:22-79
+22    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+22-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:26:5-110
+22-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:26:22-107
+23
+24    <application
+24-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:6:5-25:19
+25        android:name="com.fitboard.MainApplication"
+25-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:7:7-38
+26        android:allowBackup="false"
+26-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:11:7-34
+27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+27-->[androidx.core:core:1.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/db66a303bf26c4c9c9ee589a595c808c/core-1.1.0/AndroidManifest.xml:24:18-86
+28        android:debuggable="true"
+29        android:icon="@mipmap/ic_launcher"
+29-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:9:7-41
+30        android:label="@string/app_name"
+30-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:8:7-39
+31        android:roundIcon="@mipmap/ic_launcher_round"
+31-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:10:7-52
+32        android:theme="@style/AppTheme"
+32-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:12:7-38
+33        android:usesCleartextTraffic="true" >
+33-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/debug/AndroidManifest.xml:7:18-53
+34        <activity
+34-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:13:7-23:18
+35            android:name="com.fitboard.MainActivity"
+35-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:14:9-37
+36            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+36-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:16:9-86
+37            android:label="@string/app_name"
+37-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:15:9-41
+38            android:launchMode="singleTask"
+38-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:17:9-40
+39            android:windowSoftInputMode="adjustResize" >
+39-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:18:9-51
+40            <intent-filter>
+40-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:19:9-22:25
+41                <action android:name="android.intent.action.MAIN" />
+41-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:20:13-65
+41-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:20:21-62
+42
+43                <category android:name="android.intent.category.LAUNCHER" />
+43-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:21:13-73
+43-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:21:23-70
+44            </intent-filter>
+45        </activity>
+46        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" /> <!-- Needs to be explicitly declared on P+ -->
+46-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:24:7-84
+46-->/Users/apeksha/Desktop/ccp/FitBoard/android/app/src/main/AndroidManifest.xml:24:17-81
+47        <uses-library
+47-->[com.google.android.gms:play-services-maps:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/218b74eaf6e46bfa9995cd448a78cba2/play-services-maps-17.0.0/AndroidManifest.xml:33:9-35:40
+48            android:name="org.apache.http.legacy"
+48-->[com.google.android.gms:play-services-maps:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/218b74eaf6e46bfa9995cd448a78cba2/play-services-maps-17.0.0/AndroidManifest.xml:34:13-50
+49            android:required="false" />
+49-->[com.google.android.gms:play-services-maps:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/218b74eaf6e46bfa9995cd448a78cba2/play-services-maps-17.0.0/AndroidManifest.xml:35:13-37
+50
+51        <activity
+51-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:24:9-31:50
+52            android:name="com.google.firebase.auth.internal.FederatedSignInActivity"
+52-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:25:13-85
+53            android:excludeFromRecents="true"
+53-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:26:13-46
+54            android:exported="true"
+54-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:27:13-36
+55            android:launchMode="singleTask"
+55-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:28:13-44
+56            android:permission="com.google.firebase.auth.api.gms.permission.LAUNCH_FEDERATED_SIGN_IN"
+56-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:29:13-102
+57            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+57-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:30:13-72
+58
+59        <service
+59-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:33:9-39:19
+60            android:name="com.google.firebase.components.ComponentDiscoveryService"
+60-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:34:13-84
+61            android:exported="false" >
+61-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:35:13-37
+62            <meta-data
+62-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:36:13-38:85
+63                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
+63-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:37:17-109
+64                android:value="com.google.firebase.components.ComponentRegistrar" />
+64-->[com.google.firebase:firebase-auth:19.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/765c22e65b716d0287b29d630384fd23/firebase-auth-19.1.0/AndroidManifest.xml:38:17-82
+65            <meta-data
+65-->[com.google.android.gms:play-services-measurement-api:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/ee17f8b54bf91772d6bce1bf935b1de2/play-services-measurement-api-17.2.1/AndroidManifest.xml:30:13-32:85
+66                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
+66-->[com.google.android.gms:play-services-measurement-api:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/ee17f8b54bf91772d6bce1bf935b1de2/play-services-measurement-api-17.2.1/AndroidManifest.xml:31:17-139
+67                android:value="com.google.firebase.components.ComponentRegistrar" />
+67-->[com.google.android.gms:play-services-measurement-api:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/ee17f8b54bf91772d6bce1bf935b1de2/play-services-measurement-api-17.2.1/AndroidManifest.xml:32:17-82
+68            <meta-data
+68-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:32:13-34:85
+69                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
+69-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:33:17-96
+70                android:value="com.google.firebase.components.ComponentRegistrar" />
+70-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:34:17-82
+71        </service>
+72
+73        <receiver
+73-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:37:9-44:20
+74            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+74-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:38:13-78
+75            android:exported="true"
+75-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:39:13-36
+76            android:permission="com.google.android.c2dm.permission.SEND" >
+76-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:40:13-73
+77            <intent-filter>
+77-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:41:13-43:29
+78                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+78-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:42:17-81
+78-->[com.google.firebase:firebase-iid:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/3e723bf6ade569d15b34126e44510422/firebase-iid-19.0.0/AndroidManifest.xml:42:25-78
+79            </intent-filter>
+80        </receiver>
+81
+82        <activity
+82-->[com.google.android.gms:play-services-base:17.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/2c6eb869bd39ddf0e390342a2b736361/play-services-base-17.1.0/AndroidManifest.xml:23:9-26:75
+83            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+83-->[com.google.android.gms:play-services-base:17.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/2c6eb869bd39ddf0e390342a2b736361/play-services-base-17.1.0/AndroidManifest.xml:24:13-79
+84            android:exported="false"
+84-->[com.google.android.gms:play-services-base:17.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/2c6eb869bd39ddf0e390342a2b736361/play-services-base-17.1.0/AndroidManifest.xml:25:13-37
+85            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+85-->[com.google.android.gms:play-services-base:17.1.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/2c6eb869bd39ddf0e390342a2b736361/play-services-base-17.1.0/AndroidManifest.xml:26:13-72
+86
+87        <provider
+87-->[com.google.firebase:firebase-common:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/f748266f78c2f1dfc159efe05c30412f/firebase-common-19.0.0/AndroidManifest.xml:12:9-16:39
+88            android:name="com.google.firebase.provider.FirebaseInitProvider"
+88-->[com.google.firebase:firebase-common:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/f748266f78c2f1dfc159efe05c30412f/firebase-common-19.0.0/AndroidManifest.xml:13:13-77
+89            android:authorities="com.fitboard.firebaseinitprovider"
+89-->[com.google.firebase:firebase-common:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/f748266f78c2f1dfc159efe05c30412f/firebase-common-19.0.0/AndroidManifest.xml:14:13-72
+90            android:exported="false"
+90-->[com.google.firebase:firebase-common:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/f748266f78c2f1dfc159efe05c30412f/firebase-common-19.0.0/AndroidManifest.xml:15:13-37
+91            android:initOrder="100" />
+91-->[com.google.firebase:firebase-common:19.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/f748266f78c2f1dfc159efe05c30412f/firebase-common-19.0.0/AndroidManifest.xml:16:13-36
+92
+93        <receiver
+93-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:29:9-33:20
+94            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+94-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:30:13-85
+95            android:enabled="true"
+95-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:31:13-35
+96            android:exported="false" >
+96-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:32:13-37
+97        </receiver>
+98        <receiver
+98-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:34:9-42:20
+99            android:name="com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver"
+99-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:35:13-100
+100            android:enabled="true"
+100-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:36:13-35
+101            android:exported="true"
+101-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:37:13-36
+102            android:permission="android.permission.INSTALL_PACKAGES" >
+102-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:38:13-69
+103            <intent-filter>
+103-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:39:13-41:29
+104                <action android:name="com.android.vending.INSTALL_REFERRER" />
+104-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:40:17-79
+104-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:40:25-76
+105            </intent-filter>
+106        </receiver>
+107
+108        <service
+108-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:44:9-47:40
+109            android:name="com.google.android.gms.measurement.AppMeasurementService"
+109-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:45:13-84
+110            android:enabled="true"
+110-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:46:13-35
+111            android:exported="false" />
+111-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:47:13-37
+112        <service
+112-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:48:9-52:72
+113            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+113-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:49:13-87
+114            android:enabled="true"
+114-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:50:13-35
+115            android:exported="false"
+115-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:51:13-37
+116            android:permission="android.permission.BIND_JOB_SERVICE" />
+116-->[com.google.android.gms:play-services-measurement:17.2.1] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/09b7f8af546d3ddcaaf4f57864bcee7a/play-services-measurement-17.2.1/AndroidManifest.xml:52:13-69
+117
+118        <meta-data
+118-->[com.google.android.gms:play-services-basement:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/7ff6b40bcadce713aa08ba76d26f6622/jetified-play-services-basement-17.0.0/AndroidManifest.xml:23:9-25:69
+119            android:name="com.google.android.gms.version"
+119-->[com.google.android.gms:play-services-basement:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/7ff6b40bcadce713aa08ba76d26f6622/jetified-play-services-basement-17.0.0/AndroidManifest.xml:24:13-58
+120            android:value="@integer/google_play_services_version" />
+120-->[com.google.android.gms:play-services-basement:17.0.0] /Users/apeksha/.gradle/caches/transforms-2/files-2.1/7ff6b40bcadce713aa08ba76d26f6622/jetified-play-services-basement-17.0.0/AndroidManifest.xml:25:13-66
+121    </application>
+122
+123</manifest>

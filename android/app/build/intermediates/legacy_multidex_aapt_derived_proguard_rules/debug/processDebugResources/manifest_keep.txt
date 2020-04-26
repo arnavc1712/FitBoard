@@ -1,0 +1,4 @@
+# Referenced at /Users/apeksha/Desktop/ccp/FitBoard/android/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml:24
+-keep class androidx.core.app.CoreComponentFactory { <init>(); }
+# Referenced at /Users/apeksha/Desktop/ccp/FitBoard/android/app/build/intermediates/merged_manifests/debug/AndroidManifest.xml:24
+-keep class com.fitboard.MainApplication { <init>(); }

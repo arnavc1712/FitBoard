@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "271914539917",
+    "firebase_url": "https://ccproject-d3103.firebaseio.com",
+    "project_id": "ccproject-d3103",
+    "storage_bucket": "ccproject-d3103.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271914539917:android:abe070dd83250f75c2bbc4",
+        "android_client_info": {
+          "package_name": "com.fitboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271914539917-ub1hcv775v104l3dg9p8s6fl8ca4t1pu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBe3FmMyR1su2chVFb4R0REFti9r-C9GZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271914539917-ub1hcv775v104l3dg9p8s6fl8ca4t1pu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

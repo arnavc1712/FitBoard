@@ -12,7 +12,7 @@ import LogoutScreen from './logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
-
+import Track from './Track';
 
 
 const logout = async () => {
@@ -65,7 +65,7 @@ class Home extends Component {
 	        }}
 			>
 						<Tab.Screen name="MenuStack" component={MenuStack} />
-		        <Tab.Screen name="Maps" component={viewMaps} />
+		        <Tab.Screen name="Track" component={Track} />
 		        <Tab.Screen name="Logout" component={LogoutScreen} 
 		        			listeners={{ tabPress: e => {
 		        							console.log(e)

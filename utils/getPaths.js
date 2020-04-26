@@ -7,10 +7,9 @@ const get_waypoints_info = async (source, end_point, distance) => {
         return response.json();
     })
     .then((data) => {
-        let routes = [];
         data.routes.forEach(route => {
             let leg = route.legs[0];
-            let _steps = []
+            let _steps = [source]
             let leg_dis = leg.distance.value;
             if( 0.9*distance <= leg_dis && 1.1*distance >= leg_dis){
                 //this path has the required path
@@ -22,7 +21,7 @@ const get_waypoints_info = async (source, end_point, distance) => {
                     _steps.push(obj); 
                 });
             }
-            if(_steps.length > 0)
+            if(_steps.length > 1)
                 paths.push(_steps);
         })
         return paths;

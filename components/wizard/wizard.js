@@ -109,6 +109,7 @@ const Wizard = () => {
                             setCurrLocation={setCurrLocation}
                             startLocation={startLocation}
                             setStartLocation={setStartLocation}
+                            distance={distance}
                         />
                  
                 </ProgressStep>

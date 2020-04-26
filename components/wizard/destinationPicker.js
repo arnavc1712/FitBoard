@@ -1,14 +1,14 @@
 import React, {Component,useState, useEffect} from 'react';
-import {StyleSheet} from 'react-native';
-import {Container} from 'native-base'
+import {StyleSheet,View} from 'react-native';
+import {Container,Button,Text,Icon} from 'native-base'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import configs from "../../conf.json"
 // import Geolocation from '@react-native-community/geolocation';
 navigator.geolocation = require('@react-native-community/geolocation')
 import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from 'react-native-maps';
 import { Col, Row, Grid } from "react-native-easy-grid";
-
-
+import {GetPaths} from '../../utils/getPaths'
+import MapViewDirections from 'react-native-maps-directions';
 
 // var getPosition = function () {
 //     return new Promise(function (resolve, reject) {
@@ -33,11 +33,20 @@ const mapStyle = [
     }
 ]
 
-const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartLocation}) => {
+const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartLocation,distance}) => {
 
     const [map,setMap] = useState()
     const [marker,setMarker] = useState()
+    const [pathArr,setPathArr] = useState([])
+    const [selectedIndex,setSelectedIndex] = useState(0)
 
+
+    const onLeftBut = () => {
+        if (pathArr!=null && pathArr.length>0){
+            setSelectedIndex()
+
+        }
+    }
 
     const animate = (newCoordinates) => {
  
@@ -57,9 +66,10 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 currLocation["coords"].timing(newCoordinates).start();
             }
         }
+    
    
     return (<Grid>
-        <Row size={5} >
+        <Row size={10} >
             <MapView
                 key={1}
                 showUserLocation={true}
@@ -80,9 +90,31 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 style={{zIndex:1}}
                 flat={true}
                 coordinate={currLocation["coords"]}
-            />    
+            /> 
+            {pathArr!=null && pathArr.length>0 &&
+                <MapViewDirections
+                origin={currLocation}
+                destination={pathArr[selectedIndex]["coordinate"]}
+                apikey={configs["mapsDirectionsKey"]}
+                waypoints={pathArr[selectedIndex]["path"]}
+                strokeWidth={3}
+                strokeColor="hotpink"
+            />}
+            
             
             </MapView>
+
+            <View style={styles.pathPicker}>
+                <Button style={styles.pathPickerButton} onPress={()=>onLeftBut()} light rounded>
+                    <Icon style={styles.pathPickerIcon} name='arrow-back' />
+                </Button>
+
+                <Button light style={styles.pathPickerButton} onPress={()=>onRightBut()} rounded>
+                    <Icon style={styles.pathPickerIcon} name='arrow-forward' />
+                </Button>
+            </View>
+
+            
 
              <GooglePlacesAutocomplete
                 placeholder='Enter Location'
@@ -92,7 +124,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 getDefaultValue={() => currLocation["name"]}
                 returnKeyType={'default'}
                 fetchDetails={true}
-                onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                onPress={async (data, details = null) => { // 'details' is provided when fetchDetails = true
                     // let name = null;
                     let name = ''
                     let photo_reference = ''
@@ -110,6 +142,20 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                                      'name':name,
                                      'photo_reference':photo_reference})
                     
+                    let paths = await GetPaths(coordObj,distance)
+                    let parsePathArr = [];
+                    for (obj of paths){
+                        console.log(coordObj)
+                        console.log(obj["paths"][0])
+
+                        parsePathArr.push({coordinate:obj["coordinate"],path:obj["paths"][0]})
+                    }
+
+                    setPathArr(parsePathArr)
+                    
+                    
+                    
+                    
                     
                 }}
                 styles={autocompleteSyles}
@@ -122,7 +168,9 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                     // types: '(cities)' // default: 'geocode'
                 }}
             />
+            
           </Row>
+          
     </Grid>)
 }
 
@@ -160,6 +208,25 @@ const styles = StyleSheet.create({
       ...StyleSheet.absoluteFillObject,
         position:'absolute',
     },
+    pathPicker:{
+        position:'absolute',
+        flexDirection:'row',
+        bottom:20,
+        justifyContent: 'center', 
+        alignItems: 'center',
+        left:0,
+        right:0
+    },
+    pathPickerButton:{
+        backgroundColor:'#ec407a',
+        marginLeft:16,
+        marginRight:16,
+    },
+    pathPickerIcon:{
+        color:'white',
+        fontSize:24,
+        fontWeight:'400'
+    }
   
    });
    

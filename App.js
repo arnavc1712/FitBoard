@@ -17,9 +17,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 
+
 import LoginScreen from './components/login'
 import HomeNavScreen from './components/home'
 
+
+
+// Geolocation.getCurrentPosition(info => console.log(info),{enableHighAccuracy: true});
 
 const Stack = createStackNavigator();
 
@@ -49,7 +53,7 @@ const App = () => {
     let renderedComponent = null
 
     if(loggedIn){
-      renderedComponent = <Stack.Screen name="Home" component={HomeNavScreen} options={{headerStyle:{backgroundColor:'#00695C'},headerTintColor:'white'}}/>
+      renderedComponent = <Stack.Screen name="Home" component={HomeNavScreen} options={{headerShown:false}}/>
     }
     else{
       renderedComponent = <React.Fragment>

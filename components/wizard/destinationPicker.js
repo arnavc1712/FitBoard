@@ -43,7 +43,20 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
 
     const onLeftBut = () => {
         if (pathArr!=null && pathArr.length>0){
-            setSelectedIndex()
+            let newIndex = (selectedIndex-1)
+            if (newIndex<0){
+                newIndex = pathArr.length-1
+            }
+            setSelectedIndex(newIndex)
+
+        }
+    }
+
+    const onRightBut = () => {
+        if (pathArr!=null && pathArr.length>0){
+            let newIndex = (selectedIndex+1)%pathArr.length
+            
+            setSelectedIndex(newIndex)
 
         }
     }

@@ -9,7 +9,7 @@ import Summary from './summary'
 import GetLocation from 'react-native-get-location'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-
+import {GetPaths} from '../../utils/getPaths'
 const defaultScrollViewProps = {
     keyboardShouldPersistTaps: 'handled',
     contentContainerStyle: {
@@ -20,7 +20,7 @@ const defaultScrollViewProps = {
 
 
 
-const Wizard = () => {
+const Wizard = ({navigation}) => {
 
     const [date,setDate] = useState(new Date())
     const [event, setEvent] = useState(null)
@@ -30,31 +30,60 @@ const Wizard = () => {
                                                       "name":'',
                                                        "photo_reference":''})
                                         
-    const [startLocation, setStartLocation] = useState('')
     const [user,setUser] = useState(null)
+    const [selectedPath,setSelectedPath] = useState([])
+    const [destination,setDestination] = useState({})
+    const [selectedIndex,setSelectedIndex] = useState(0)
+    const [pathArr,setPathArr] = useState([])
     const eventColl = firestore().collection('Events')
 
+    const getPaths = async () => {
+            
+        let paths = await GetPaths(currLocation['coords'],distance)
 
+        let parsePathArr = [];
+        for (obj of paths){
+            parsePathArr.push({coordinate:obj["coordinate"],path:obj["paths"][0]})
+        }
+
+        setPathArr(parsePathArr)
+    }
+    
     useEffect(()=>{
         const subscriber = auth().onAuthStateChanged((user)=>setUser(user))
         return subscriber
     },[])
 
+
+
+
     const createEvent = async () => {
         if(user){
-            console.log(user)
-            await eventColl.add({
-                type:event,
-                distance:distance,
-                coords:{latitude:currLocation["coords"]["latitude"],
-                        longitude:currLocation["coords"]["longitude"]},
-                locationName:currLocation["name"],
-                photoReference:currLocation["photo_reference"],
-                timestamp:date,
-                creator:user["email"]
-            })
+            try{
+                await eventColl.add({
+                    type:event,
+                    distance:distance,
+                    coords:{latitude:currLocation["coords"]["latitude"],
+                            longitude:currLocation["coords"]["longitude"]},
+                    locationName:currLocation["name"],
+                    photoReference:currLocation["photo_reference"],
+                    timestamp:date,
+                    destination:destination,
+                    waypoints:selectedPath,
+                    creator:user["email"]
+                })
 
-            console.log("Event added")
+                Toast.show({text:"Successfully Created Event",buttonText:"Okay",duration:3000})
+                navigation.navigate('MenuStack',{screen:'Menu'})
+
+
+
+
+            }
+            catch(error){
+                alert("Error Submitting. Please Try again")
+            }
+            
             
          }
 
@@ -68,7 +97,7 @@ const Wizard = () => {
                 const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
                 let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
                 setCurrLocation({'coords':coordObj,
-                                  'name':'',
+                                  'name':'Current Location',
                                   'photo_reference':''})
                 animate(coordObj);
             }
@@ -89,6 +118,15 @@ const Wizard = () => {
         }
     }
 
+    const onChoosePathNext = () => {
+        if(Object.keys(destination).length>0 && selectedPath!=null && selectedPath.length>0){
+            setErrors(false)
+        }
+        else{
+            setErrors(true)
+            Toast.show({text:"Please choose the starting location as well as a path",buttonText:"Okay",duration:3000})
+        }
+    }
     return (
         <View style={{flex: 1}}>
             <ProgressSteps>
@@ -103,13 +141,19 @@ const Wizard = () => {
                     />
                    
                 </ProgressStep>
-                <ProgressStep label="Choose Path" scrollViewProps={defaultScrollViewProps}>
+                <ProgressStep label="Choose Path" scrollViewProps={defaultScrollViewProps} onNext={onChoosePathNext} errors={errors}>
                         <DestinationPicker 
                             currLocation={currLocation}
                             setCurrLocation={setCurrLocation}
-                            startLocation={startLocation}
-                            setStartLocation={setStartLocation}
                             distance={distance}
+                            setSelectedPath={setSelectedPath}
+                            setDestination={setDestination}
+                            selectedPath={selectedPath}
+                            destination={destination}
+                            pathArr={pathArr}
+                            setPathArr={setPathArr}
+                            selectedIndex={selectedIndex}
+                            setSelectedIndex={setSelectedIndex}
                         />
                  
                 </ProgressStep>

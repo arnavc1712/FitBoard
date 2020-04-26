@@ -17,7 +17,6 @@ const get_waypoints_info = async (source, end_point, distance) => {
                     let obj = {};
                     obj['latitude'] = step.end_location.lat
                     obj['longitude'] = step.end_location.lng
-                    obj['polyline'] = step.polyline.points
                     _steps.push(obj); 
                 });
             }
@@ -48,7 +47,7 @@ export const GetPaths = (source, distance) => {
                 let waypoints_info = await get_waypoints_info(source, coordinate, _distance_int);
                 if(waypoints_info.length > 0){
                     let obj = {}
-                    obj['coordinate'] = coordinate;
+                    obj['coordinate'] = {latitude:coordinate["lat"],longitude:coordinate["lng"]};
                     obj['paths'] = waypoints_info;
                     suggested_end_point.push(obj);
                 }

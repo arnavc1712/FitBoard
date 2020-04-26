@@ -33,12 +33,47 @@ const mapStyle = [
     }
 ]
 
-const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartLocation,distance}) => {
+const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,pathArr,setPathArr,destination,setSelectedPath,setDestination,selectedIndex,setSelectedIndex}) => {
 
     const [map,setMap] = useState()
     const [marker,setMarker] = useState()
-    const [pathArr,setPathArr] = useState([])
-    const [selectedIndex,setSelectedIndex] = useState(0)
+    
+    
+    useEffect(()=>{
+        if(pathArr.length>0){
+            setSelectedPath(pathArr[selectedIndex]["path"])
+            setDestination(pathArr[selectedIndex]["coordinate"])
+        }
+        else{
+            setSelectedIndex(0)
+            setSelectedPath([])
+            setDestination({})
+        }
+    },[pathArr,selectedIndex])
+
+    useEffect(()=>{
+        if(currLocation["name"]!='Current Location'){
+            getPaths();
+            setSelectedIndex(0)
+        }
+    },[])
+
+
+
+
+    const getPaths = async () => {
+            
+        let paths = await GetPaths(currLocation['coords'],distance)
+
+        let parsePathArr = [];
+        for (obj of paths){
+            parsePathArr.push({coordinate:obj["coordinate"],path:obj["paths"][0]})
+        }
+
+        setPathArr(parsePathArr)
+    }
+
+    
 
 
     const onLeftBut = () => {
@@ -55,8 +90,8 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
     const onRightBut = () => {
         if (pathArr!=null && pathArr.length>0){
             let newIndex = (selectedIndex+1)%pathArr.length
-            
             setSelectedIndex(newIndex)
+       
 
         }
     }
@@ -91,11 +126,11 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                 style={styles.map}
                 initialRegion={{
-                latitude: currLocation["coords"]["latitude"],
-                longitude: currLocation["coords"]["longitude"],
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.0121,
-            }}
+                    latitude: currLocation["coords"]["latitude"],
+                    longitude: currLocation["coords"]["longitude"],
+                    latitudeDelta: 0.015,
+                    longitudeDelta: 0.0121,
+                }}
             >
             
             <Marker.Animated
@@ -104,15 +139,28 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                 flat={true}
                 coordinate={currLocation["coords"]}
             /> 
-            {pathArr!=null && pathArr.length>0 &&
+            {selectedPath!=null && selectedPath.length>0 &&
                 <MapViewDirections
-                origin={currLocation}
-                destination={pathArr[selectedIndex]["coordinate"]}
+                origin={currLocation['coords']}
+                destination={destination}
                 apikey={configs["mapsDirectionsKey"]}
-                waypoints={pathArr[selectedIndex]["path"]}
+                waypoints={selectedPath}
                 strokeWidth={3}
                 strokeColor="hotpink"
-            />}
+            />
+            }
+            {
+                Object.keys(destination).length>0 &&
+                <Marker 
+                coordinate={destination}
+            
+                pinColor="#00B8D4"
+                />
+            }
+
+            
+
+            
             
             
             </MapView>
@@ -155,16 +203,10 @@ const DestinationPicker = ({currLocation,setCurrLocation,startLocation,setStartL
                                      'name':name,
                                      'photo_reference':photo_reference})
                     
-                    let paths = await GetPaths(coordObj,distance)
-                    let parsePathArr = [];
-                    for (obj of paths){
-                        console.log(coordObj)
-                        console.log(obj["paths"][0])
-
-                        parsePathArr.push({coordinate:obj["coordinate"],path:obj["paths"][0]})
-                    }
-
-                    setPathArr(parsePathArr)
+                    
+                    setSelectedIndex(0)
+                    getPaths();
+                    
                     
                     
                     

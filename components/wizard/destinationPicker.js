@@ -136,7 +136,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,p
             <Marker.Animated
                 ref={mark => { setMarker(mark); }}
                 style={{zIndex:1}}
-                flat={true}
+                // flat={true}
                 coordinate={currLocation["coords"]}
             /> 
             {selectedPath!=null && selectedPath.length>0 &&

@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 import { createStackNavigator } from '@react-navigation/stack';
 import Menu from "./menu"
 import Wizard from './wizard/wizard'
+import ShowEvents from './registerEvents/showEvents'
 const Stack = createStackNavigator();
 
 
@@ -15,6 +16,7 @@ const MenuStack = () => {
        <Stack.Navigator>
            <Stack.Screen name="Menu" component={Menu} />
            <Stack.Screen name="Wizard" component={Wizard}/>
+           <Stack.Screen name="ShowEvents" component={ShowEvents}/>
 
        </Stack.Navigator>
         // <Grid style={styles.grid}>

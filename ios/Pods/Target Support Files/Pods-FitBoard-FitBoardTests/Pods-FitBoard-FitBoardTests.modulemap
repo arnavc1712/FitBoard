@@ -1,6 +1,0 @@
-module Pods_FitBoard_FitBoardTests {
-  umbrella header "Pods-FitBoard-FitBoardTests-umbrella.h"
-
-  export *
-  module * { export * }
-}

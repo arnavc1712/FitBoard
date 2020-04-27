@@ -70,7 +70,8 @@ const Wizard = ({navigation}) => {
                     timestamp:date,
                     destination:destination,
                     waypoints:selectedPath,
-                    creator:user["email"]
+                    creator:user["email"],
+                    registeredUsers:[user["email"]]
                 })
 
                 Toast.show({text:"Successfully Created Event",buttonText:"Okay",duration:3000})

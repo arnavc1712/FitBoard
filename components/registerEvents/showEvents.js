@@ -7,8 +7,7 @@ import auth from '@react-native-firebase/auth';
 import Modal from 'react-native-modal';
 import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-// import { confirmAlert } from 'react-confirm-alert'; // Import
-// import 'react-confirm-alert/src/react-confirm-alert.css'; // Import cs
+import { ConfirmDialog } from 'react-native-simple-dialogs';
 
 const mapStyle = [
     {
@@ -39,6 +38,10 @@ const ShowEvents = () => {
     const [destination,setDestination] = useState({})
     const [waypoints,setWaypoints] = useState([])
     const [visible,setVisible] = useState(false)
+    const [currEvent,setCurrEvent] = useState(undefined)
+
+    const [UnregisterDialogVisible,setUnregisterDialogVisible] = useState(false)
+    const [RegisterDialogVisible,setRegisterDialogVisible] = useState(false)
     const eventColl = firestore().collection('Events')
 
     useEffect(()=>{
@@ -71,15 +74,17 @@ const ShowEvents = () => {
 
     }
 
-    const onRegister = async (event) => {
+    const onRegister = async () => {
         try{
-            const eventId = event.id
-            let registeredUsers = event._data.registeredUsers
+            // setDialogVisible(true)
+            const eventId = currEvent.id
+            let registeredUsers = currEvent._data.registeredUsers
             if (!registeredUsers.includes(user["email"])){
                 registeredUsers.push(user["email"])
             }
 
             await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
+            setRegisterDialogVisible(false)
             Toast.show({text:"Successfully Registered",buttonText:"Okay",duration:3000})
         }
         catch(error){
@@ -88,10 +93,10 @@ const ShowEvents = () => {
     }
 
 
-    const onUnregister = async (event) => {
+    const onUnregister = async () => {
         try{
-            const eventId = event.id
-            let registeredUsers = event._data.registeredUsers
+            const eventId = currEvent.id
+            let registeredUsers = currEvent._data.registeredUsers
             if (registeredUsers.includes(user["email"])){
                 const index = registeredUsers.indexOf(user["email"]);
                 registeredUsers.splice(index,1)
@@ -99,6 +104,7 @@ const ShowEvents = () => {
             }
 
             await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
+            setUnregisterDialogVisible(false)
             Toast.show({text:"Successfully Unregistered",buttonText:"Okay",duration:3000})
         }
         catch(error){
@@ -137,9 +143,9 @@ const ShowEvents = () => {
 
                                 <Right style={{flex:1}}>
                                     {item._data.registeredUsers.includes(user["email"]) &&
-                                        <Button bordered rounded danger onPress={()=>onUnregister(item)}><Text>Unregister</Text></Button>}
+                                        <Button bordered rounded danger onPress={()=>{setUnregisterDialogVisible(true);setCurrEvent(item)}}><Text>Unregister</Text></Button>}
                                     {!item._data.registeredUsers.includes(user["email"]) &&
-                                        <Button bordered rounded onPress={()=>onRegister(item)}><Text>Register</Text></Button>}
+                                        <Button bordered rounded onPress={()=>{setRegisterDialogVisible(true);setCurrEvent(item)}}><Text>Register</Text></Button>}
                                     
                                 </Right>
                             {/* </Container> */}
@@ -149,6 +155,38 @@ const ShowEvents = () => {
                 }
                 />}
             </View>
+
+            <ConfirmDialog
+                title="Confirmation"
+                message="Are you sure about that?"
+                animationType="fade"
+                visible={UnregisterDialogVisible}
+                onTouchOutside={() => setUnregisterDialogVisible(false)}
+                positiveButton={{
+                    title: "YES",
+                    onPress: () => onUnregister()
+                }}
+                negativeButton={{
+                    title: "NO",
+                    onPress: () => {setUnregisterDialogVisible(false)}
+                }}
+            />
+
+            <ConfirmDialog
+                title="Confirmation"
+                animationType="fade"
+                message="Are you sure about that?"
+                visible={RegisterDialogVisible}
+                onTouchOutside={() => setRegisterDialogVisible(false)}
+                positiveButton={{
+                    title: "YES",
+                    onPress: () => onRegister()
+                }}
+                negativeButton={{
+                    title: "NO",
+                    onPress: () => {setRegisterDialogVisible(false)}
+                }}
+            />
 
             <Modal isVisible={visible} >
                 <View style={{ flex: 1 }}>

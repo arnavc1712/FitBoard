@@ -159,6 +159,7 @@ const ShowEvents = () => {
             <ConfirmDialog
                 title="Confirmation"
                 message="Are you sure about that?"
+                animationType="fade"
                 visible={UnregisterDialogVisible}
                 onTouchOutside={() => setUnregisterDialogVisible(false)}
                 positiveButton={{
@@ -173,6 +174,7 @@ const ShowEvents = () => {
 
             <ConfirmDialog
                 title="Confirmation"
+                animationType="fade"
                 message="Are you sure about that?"
                 visible={RegisterDialogVisible}
                 onTouchOutside={() => setRegisterDialogVisible(false)}

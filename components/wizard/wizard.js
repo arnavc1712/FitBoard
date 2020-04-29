@@ -81,7 +81,8 @@ const Wizard = ({navigation,route}) => {
                     destination:destination,
                     waypoints:selectedPath,
                     creator:user["email"],
-                    registeredUsers:[user["email"]]
+                    registeredUsers:[user["email"]],
+                    createdAt:new Date()
                 })
                 let userData = await userColl.doc(user["email"]).get()
                 let participatingEvents = userData._data.participatingEvents

@@ -1,8 +1,5 @@
-import React, {Component} from 'react';
-import {Container,Text,Content,Header, Icon, Picker, Form,Button,Item,Input} from 'native-base';
-import { Col, Row, Grid } from "react-native-easy-grid";
+import React, {Component,useEffect,useState} from 'react';
 import {View,StyleSheet,Image} from 'react-native';
-import Constants from 'expo-constants';
 import { createStackNavigator } from '@react-navigation/stack';
 import Menu from "./menu"
 import Wizard from './wizard/wizard'
@@ -10,7 +7,8 @@ import ShowEvents from './registerEvents/showEvents'
 const Stack = createStackNavigator();
 
 
-const MenuStack = () => {
+const MenuStack = ({navigation,route}) => {
+   
     
     return (
        <Stack.Navigator>
@@ -19,13 +17,6 @@ const MenuStack = () => {
            <Stack.Screen name="ShowEvents" component={ShowEvents}/>
 
        </Stack.Navigator>
-        // <Grid style={styles.grid}>
-        //     <Row style={styles.row1} size={1}></Row>
-        //     <Row style={styles.row2} size={1}>
-        //     <Button full rounded style={styles.button}><Text style={{fontSize:12}}> Create Event </Text></Button>
-        //     <Button full rounded style={styles.button}><Text style={{fontSize:12}}> Register for Event </Text></Button>
-        //     </Row>
-        // </Grid>
        
     )
 }

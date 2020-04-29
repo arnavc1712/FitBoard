@@ -39,14 +39,22 @@ const ShowEvents = () => {
     const [waypoints,setWaypoints] = useState([])
     const [visible,setVisible] = useState(false)
     const [currEvent,setCurrEvent] = useState(undefined)
+    const [userData,setUserData] = useState({})
 
     const [UnregisterDialogVisible,setUnregisterDialogVisible] = useState(false)
     const [RegisterDialogVisible,setRegisterDialogVisible] = useState(false)
     const eventColl = firestore().collection('Events')
+    const userColl = firestore().collection('Users')
 
     useEffect(()=>{
 
-        const subscriber = auth().onAuthStateChanged((user)=>setUser(user))
+        const subscriber = auth().onAuthStateChanged(async(currUser)=>{
+            setUser(currUser)
+            // console.log(currUser)
+            let uData = await userColl.doc(currUser["email"]).get()
+            setUserData(uData._data)
+            // console.log(uData._data)
+        })
 
         const getEvents = async() => {
             try{
@@ -64,6 +72,19 @@ const ShowEvents = () => {
         return subscriber
 
     },[])
+
+
+
+    useEffect(()=>{
+        // console.log(user)
+        const updateUserData = async () => {
+            if(user){
+                // console.log("In user")
+                await userColl.doc(user["email"]).update(userData)
+            }
+        }
+        updateUserData()
+    },[userData])
     
 
     const showRoute = (event) => {
@@ -74,13 +95,23 @@ const ShowEvents = () => {
 
     }
 
+
     const onRegister = async () => {
         try{
             // setDialogVisible(true)
             const eventId = currEvent.id
             let registeredUsers = currEvent._data.registeredUsers
+            let registeredEvents = userData.participatingEvents
+                 // Updating events which a  user has participated in
+
+            
             if (!registeredUsers.includes(user["email"])){
                 registeredUsers.push(user["email"])
+                registeredEvents.push(eventId)
+                
+                setUserData({email:userData.email,
+                             lastUpdatedLocation:userData.lastUpdatedLocation,
+                            participatingEvents:registeredEvents})
             }
 
             await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
@@ -97,9 +128,15 @@ const ShowEvents = () => {
         try{
             const eventId = currEvent.id
             let registeredUsers = currEvent._data.registeredUsers
+            let registeredEvents = userData.participatingEvents
             if (registeredUsers.includes(user["email"])){
-                const index = registeredUsers.indexOf(user["email"]);
+                let index = registeredUsers.indexOf(user["email"]);
                 registeredUsers.splice(index,1)
+                index = registeredEvents.indexOf(eventId)
+                registeredEvents.splice(index,1)
+                setUserData({email:userData.email,
+                    lastUpdatedLocation:userData.lastUpdatedLocation,
+                   participatingEvents:registeredEvents})
 
             }
 

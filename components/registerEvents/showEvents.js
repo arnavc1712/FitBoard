@@ -88,7 +88,7 @@ const ShowEvents = () => {
     
 
     const showRoute = (event) => {
-        setSource(event.coords)
+        setSource(event.source)
         setDestination(event.destination)
         setWaypoints(event.waypoints)
         setVisible(true)

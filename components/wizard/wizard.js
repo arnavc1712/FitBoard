@@ -32,6 +32,10 @@ const Wizard = ({navigation,route}) => {
     const [destination,setDestination] = useState({})
     const [selectedIndex,setSelectedIndex] = useState(0)
     const [pathArr,setPathArr] = useState([])
+    const [city,setCity] = useState('')
+    const [state,setState] = useState('')
+    const [country,setCountry] = useState('')
+    const [zipCode,setZipCode] = useState('')
     const eventColl = firestore().collection('Events')
     const userColl = firestore().collection('Users')
 
@@ -65,9 +69,13 @@ const Wizard = ({navigation,route}) => {
                 const newEvent = await eventColl.add({
                     type:event,
                     distance:distance,
-                    coords:{latitude:currLocation["coords"]["latitude"],
+                    source:{latitude:currLocation["coords"]["latitude"],
                             longitude:currLocation["coords"]["longitude"]},
                     locationName:currLocation["name"],
+                    country:country,
+                    state:state,
+                    city:city,
+                    zipCode:zipCode,
                     photoReference:currLocation["photo_reference"],
                     timestamp:date,
                     destination:destination,
@@ -143,6 +151,10 @@ const Wizard = ({navigation,route}) => {
                             setPathArr={setPathArr}
                             selectedIndex={selectedIndex}
                             setSelectedIndex={setSelectedIndex}
+                            setCity={setCity}
+                            setCountry={setCountry}
+                            setState={setState}
+                            setZipCode={setZipCode}
                         />
                  
                 </ProgressStep>

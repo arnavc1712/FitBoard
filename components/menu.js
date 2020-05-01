@@ -23,7 +23,6 @@ const Menu = ({navigation}) => {
         try{
             const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
             let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
-            setCurrLocation(coordObj)
             // console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=${coordObj.latitude},${coordObj.longitude}&key=${configs.mapsDirectionsKey}`)
             let response = await fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + coordObj.latitude.toString() + ',' + coordObj.longitude.toString() + '&key=' + configs["mapsDirectionsKey"])
             let data = await response.json()
@@ -44,7 +43,6 @@ const Menu = ({navigation}) => {
                 }
             }
 
-            setTopic(`${state}-${city}-${zipCode}`)
 
             messaging()
             .subscribeToTopic(`${state}-${city}-${zipCode}`)
@@ -78,8 +76,8 @@ const Menu = ({navigation}) => {
         <Grid style={styles.grid}>
             <Row style={styles.row1} size={1}></Row>
             <Row style={styles.row2} size={1}>
-                <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'Wizard',params:{currLocation:currLocation,topic:topic}})}><Text style={{fontSize:12}}> Create Event </Text></Button>
-                <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation,topic:topic}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>
+                <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'Wizard',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Create Event </Text></Button>
+                <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>
             </Row>
         </Grid>
        

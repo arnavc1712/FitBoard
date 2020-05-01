@@ -8,6 +8,8 @@ import Summary from './summary'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {GetPaths} from '../../utils/getPaths'
+import GetLocation from 'react-native-get-location'
+
 const defaultScrollViewProps = {
     keyboardShouldPersistTaps: 'handled',
     contentContainerStyle: {
@@ -42,7 +44,18 @@ const Wizard = ({navigation,route}) => {
 
 
     useEffect(() => {
+
         const subscriber = auth().onAuthStateChanged((user)=>setUser(user))
+        const getPos = async () => {
+            const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
+            let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
+            setCurrLocation({coords:coordObj,
+                             name:'',
+                            photo_reference:''})
+        }
+        if(!currLocation.coords.latitude || !currLocation.coords.latitude){
+            getPos()
+        }
 			// getCurrPos();
 		return subscriber
 	},[])

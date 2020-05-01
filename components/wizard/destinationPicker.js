@@ -33,7 +33,7 @@ const mapStyle = [
     }
 ]
 
-const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,pathArr,setPathArr,destination,setSelectedPath,setDestination,selectedIndex,setSelectedIndex}) => {
+const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,pathArr,setPathArr,destination,setSelectedPath,setDestination,selectedIndex,setSelectedIndex,setCountry,setCity,setState,setZipCode}) => {
 
     const [map,setMap] = useState()
     const [marker,setMarker] = useState()
@@ -189,6 +189,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,p
                     // let name = null;
                     let name = ''
                     let photo_reference = ''
+                    
                     if ("description" in data){
                         photo_reference = details["photos"][0]["photo_reference"]
                         name = data["description"]
@@ -206,6 +207,22 @@ const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,p
                     
                     setSelectedIndex(0)
                     getPaths();
+
+                    for (let val of details["address_components"]){
+                        if(val["types"].includes("administrative_area_level_1")){
+                            setState(val["short_name"])
+                        }
+                        else if(val["types"].includes("locality")){
+                            setCity(val["long_name"].toLowerCase())
+                        }
+                        else if(val["types"].includes("country")){
+                            setCountry(val["short_name"])
+                        }
+                        else if(val["types"].includes("postal_code")){
+        
+                            setZipCode(val["long_name"])
+                        }
+                    }
                     
                     
                     

@@ -6,7 +6,7 @@ import GetLocation from 'react-native-get-location'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import configs from "../conf.json"
-
+import messaging from '@react-native-firebase/messaging';
 
 
 const Menu = ({navigation}) => {
@@ -43,12 +43,17 @@ const Menu = ({navigation}) => {
                 }
             }
 
+            messaging()
+            .subscribeToTopic(`${state}-${city}-${zipCode}`)
+            .then(() => console.log(`Subscribed to topic! ${state}-${city}-${zipCode}`));
+
             await userColl.doc(user["email"])
                                .set({lastUpdatedLocation:coordObj,
                                     country:country,
                                     state:state,
                                     city:city,
-                                    zipCode:zipCode},{merge:true})
+                                    zipCode:zipCode,
+                                    topics:firestore.FieldValue.arrayUnion(`${state}-${city}-${zipCode}`)},{merge:true})
 
         }
         catch(error){

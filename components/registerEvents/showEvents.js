@@ -108,6 +108,12 @@ const ShowEvents = () => {
             if (!registeredUsers.includes(user["email"])){
                 registeredUsers.push(user["email"])
                 registeredEvents.push(eventId)
+                if(registeredEvents){
+                    registeredEvents.push(eventId)
+                }
+                else{
+                    registeredEvents = [newEvent.id]
+                }
                 
                 setUserData({email:userData.email,
                              lastUpdatedLocation:userData.lastUpdatedLocation,

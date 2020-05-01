@@ -77,6 +77,7 @@ const Wizard = ({navigation,route}) => {
                     city:city,
                     zipCode:zipCode,
                     photoReference:currLocation["photo_reference"],
+                    topic:`${state}-${city}-${zipCode}`,
                     timestamp:date,
                     destination:destination,
                     waypoints:selectedPath,
@@ -86,7 +87,12 @@ const Wizard = ({navigation,route}) => {
                 })
                 let userData = await userColl.doc(user["email"]).get()
                 let participatingEvents = userData._data.participatingEvents
-                participatingEvents.push(newEvent.id)
+                if(participatingEvents){
+                    participatingEvents.push(newEvent.id)
+                }
+                else{
+                    participatingEvents = [newEvent.id]
+                }
                 await userColl.doc(user["email"]).update({participatingEvents:participatingEvents})
 
                 Toast.show({text:"Successfully Created Event",buttonText:"Okay",duration:3000})

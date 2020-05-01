@@ -12,6 +12,7 @@ import messaging from '@react-native-firebase/messaging';
 const Menu = ({navigation}) => {
 
     const [currLocation,setCurrLocation] = useState({latitude:null,longitude:null})
+    const [topic,setTopic] = useState(null)
     let state = ''
     let zipCode = ''
     let country = ''
@@ -43,9 +44,12 @@ const Menu = ({navigation}) => {
                 }
             }
 
+            setTopic(`${state}-${city}-${zipCode}`)
+
             messaging()
             .subscribeToTopic(`${state}-${city}-${zipCode}`)
             .then(() => console.log(`Subscribed to topic! ${state}-${city}-${zipCode}`));
+
 
             await userColl.doc(user["email"])
                                .set({lastUpdatedLocation:coordObj,
@@ -74,8 +78,8 @@ const Menu = ({navigation}) => {
         <Grid style={styles.grid}>
             <Row style={styles.row1} size={1}></Row>
             <Row style={styles.row2} size={1}>
-            <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'Wizard',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Create Event </Text></Button>
-            <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>
+                <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'Wizard',params:{currLocation:currLocation,topic:topic}})}><Text style={{fontSize:12}}> Create Event </Text></Button>
+                <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation,topic:topic}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>
             </Row>
         </Grid>
        

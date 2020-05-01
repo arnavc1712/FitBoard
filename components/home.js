@@ -11,7 +11,7 @@ import LogoutScreen from './logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
-
+import messaging from '@react-native-firebase/messaging'
 
 
 const logout = async () => {
@@ -34,25 +34,14 @@ const Home = ({navigation,route}) => {
 		// const [currLocation,setCurrLocation] = useState({latitude:null,longitude:null})
 	
 			
-	// 		messaging().onNotificationOpenedApp(remoteMessage => {
-	// 			console.log(
-	// 				'Notification caused app to open from background state:',
-	// 				remoteMessage.notification,
-	// 			);
-	// 			navigation.navigate('MenuStack',{screen:'ShowEvents'});
-	// 		});
-	// 		const getToken = async() => {
-	// 			await messaging().subscribeToTopic('weather')
-	// 			console.log("Subscribed to topic")
-  // // .then(() => console.log('Subscribed to topic!'));
-	// 			await messaging().registerDeviceForRemoteMessages();
+			messaging().onNotificationOpenedApp(remoteMessage => {
+				console.log(
+					'Notification caused app to open from background state:',
+					remoteMessage.notification,
+				);
+				navigation.navigate('MenuStack',{screen:'ShowEvents'});
+			});
 
-  // // Get the token
-	// 			const token = await messaging().getToken();
-	// 			console.log("Device token")
-	// 			console.log(token)
-	// 		}
-	// 		getToken()
 		
 		return(
 			<Tab.Navigator

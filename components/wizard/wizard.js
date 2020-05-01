@@ -1,12 +1,10 @@
 import React, {Component,useState,useEffect} from 'react';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 import {Button,Text,Toast,List,ListItem,Right,Left} from 'native-base'
-import { Col, Row, Grid } from "react-native-easy-grid";
 import { View,StyleSheet } from 'react-native';
 import DestinationPicker from './destinationPicker';
 import EventDetailPicker from './eventDetailPicker';
 import Summary from './summary'
-import GetLocation from 'react-native-get-location'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {GetPaths} from '../../utils/getPaths'
@@ -20,13 +18,12 @@ const defaultScrollViewProps = {
 
 
 
-const Wizard = ({navigation}) => {
-
+const Wizard = ({navigation,route}) => {
     const [date,setDate] = useState(new Date())
     const [event, setEvent] = useState(null)
     const [distance, setDistance] = useState(null)
     const [errors,setErrors] = useState(false)
-    const [currLocation, setCurrLocation] = useState({"coords":{latitude:38.4214278,longitude:-111.9185674},
+    const [currLocation, setCurrLocation] = useState({"coords":route.params.currLocation,
                                                       "name":'',
                                                        "photo_reference":''})
                                         
@@ -35,7 +32,20 @@ const Wizard = ({navigation}) => {
     const [destination,setDestination] = useState({})
     const [selectedIndex,setSelectedIndex] = useState(0)
     const [pathArr,setPathArr] = useState([])
+    const [city,setCity] = useState('')
+    const [state,setState] = useState('')
+    const [country,setCountry] = useState('')
+    const [zipCode,setZipCode] = useState('')
     const eventColl = firestore().collection('Events')
+    const userColl = firestore().collection('Users')
+
+
+
+    useEffect(() => {
+        const subscriber = auth().onAuthStateChanged((user)=>setUser(user))
+			// getCurrPos();
+		return subscriber
+	},[])
 
     const getPaths = async () => {
             
@@ -48,11 +58,7 @@ const Wizard = ({navigation}) => {
 
         setPathArr(parsePathArr)
     }
-    
-    useEffect(()=>{
-        const subscriber = auth().onAuthStateChanged((user)=>setUser(user))
-        return subscriber
-    },[])
+
 
 
 
@@ -60,18 +66,34 @@ const Wizard = ({navigation}) => {
     const createEvent = async () => {
         if(user){
             try{
-                await eventColl.add({
+                const newEvent = await eventColl.add({
                     type:event,
                     distance:distance,
-                    coords:{latitude:currLocation["coords"]["latitude"],
+                    source:{latitude:currLocation["coords"]["latitude"],
                             longitude:currLocation["coords"]["longitude"]},
                     locationName:currLocation["name"],
+                    country:country,
+                    state:state,
+                    city:city,
+                    zipCode:zipCode,
                     photoReference:currLocation["photo_reference"],
+                    topic:`${state}-${city}-${zipCode}`,
                     timestamp:date,
                     destination:destination,
                     waypoints:selectedPath,
-                    creator:user["email"]
+                    creator:user["email"],
+                    registeredUsers:[user["email"]],
+                    createdAt:new Date()
                 })
+                let userData = await userColl.doc(user["email"]).get()
+                let participatingEvents = userData._data.participatingEvents
+                if(participatingEvents){
+                    participatingEvents.push(newEvent.id)
+                }
+                else{
+                    participatingEvents = [newEvent.id]
+                }
+                await userColl.doc(user["email"]).update({participatingEvents:participatingEvents})
 
                 Toast.show({text:"Successfully Created Event",buttonText:"Okay",duration:3000})
                 navigation.navigate('MenuStack',{screen:'Menu'})
@@ -89,24 +111,6 @@ const Wizard = ({navigation}) => {
 
     }
 
-
-    useEffect(() => {
-        const getCurrPos = async () => {
-            try{
-                
-                const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
-                let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
-                setCurrLocation({'coords':coordObj,
-                                  'name':'Current Location',
-                                  'photo_reference':''})
-                animate(coordObj);
-            }
-            catch(error){
-                console.log(error)
-            }
-        }
-        getCurrPos();
-      },[]);
 
     const onDateNext = () => {
         if (date==null || event==null || distance==null){
@@ -154,6 +158,10 @@ const Wizard = ({navigation}) => {
                             setPathArr={setPathArr}
                             selectedIndex={selectedIndex}
                             setSelectedIndex={setSelectedIndex}
+                            setCity={setCity}
+                            setCountry={setCountry}
+                            setState={setState}
+                            setZipCode={setZipCode}
                         />
                  
                 </ProgressStep>

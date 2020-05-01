@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component,useEffect,useState } from 'react';
 
 import { Container, Text ,Button,Content,Form,Input,Root,Header,Body,Title,Item as FormItem,Label,Toast} from 'native-base';
 import {
   StyleSheet 
 } from 'react-native';
 
-import Constants from 'expo-constants';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LogoutScreen from './logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
-import Track from './Track';
+import Track from './track/Track';
 
 
 const logout = async () => {
@@ -31,13 +30,30 @@ const logout = async () => {
 
 const Tab = createBottomTabNavigator();
 
-class Home extends Component {
+const Home = ({navigation,route}) => {
+		// const [currLocation,setCurrLocation] = useState({latitude:null,longitude:null})
+	
+			
+	// 		messaging().onNotificationOpenedApp(remoteMessage => {
+	// 			console.log(
+	// 				'Notification caused app to open from background state:',
+	// 				remoteMessage.notification,
+	// 			);
+	// 			navigation.navigate('MenuStack',{screen:'ShowEvents'});
+	// 		});
+	// 		const getToken = async() => {
+	// 			await messaging().subscribeToTopic('weather')
+	// 			console.log("Subscribed to topic")
+  // // .then(() => console.log('Subscribed to topic!'));
+	// 			await messaging().registerDeviceForRemoteMessages();
 
-	constructor(props){
-		super(props)
-	}
-
-	render(){
+  // // Get the token
+	// 			const token = await messaging().getToken();
+	// 			console.log("Device token")
+	// 			console.log(token)
+	// 		}
+	// 		getToken()
+		
 		return(
 			<Tab.Navigator
 			screenOptions={({ route }) => ({
@@ -64,8 +80,9 @@ class Home extends Component {
 	          inactiveTintColor: 'gray',
 	        }}
 			>
-						<Tab.Screen name="MenuStack" component={MenuStack} />
-		        <Tab.Screen name="Track" component={Track} />
+				<Tab.Screen name="MenuStack" component={MenuStack}/>
+		        <Tab.Screen name="Maps" component={viewMaps} />
+				<Tab.Screen name="Track" component={Track} />
 		        <Tab.Screen name="Logout" component={LogoutScreen} 
 		        			listeners={{ tabPress: e => {
 		        							console.log(e)
@@ -74,7 +91,6 @@ class Home extends Component {
 		        />
 	      	</Tab.Navigator>
 		)
-	}
 }
 
 

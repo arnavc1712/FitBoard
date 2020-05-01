@@ -10,6 +10,7 @@ import VerifyEmailContent from './verifyEmailModalContent';
 import Modal from "react-native-modal";
 
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const LoginScreen = (props) => {
 
@@ -20,12 +21,14 @@ const LoginScreen = (props) => {
     const [password, setPassword] = useState('')
     const [user,setUser] = useState()
     const [showModal,setShowModal] = useState(false)
+    const userColl = firestore().collection('Users')
 
 
     const onLogin = async (val) => {
         try{
             const currentUser = await auth().signInWithEmailAndPassword(email.trim(),password)
             setUser(currentUser)
+            console.log(currentUser)
             if(!currentUser.user.emailVerified){
                 setShowModal(true)
             }
@@ -43,8 +46,13 @@ const LoginScreen = (props) => {
     const onSignup = async () => {
         try {
             const currentUser = await auth().createUserWithEmailAndPassword(email,password)
+            
             setUser(currentUser)
-            // console.log(user)
+            if (currentUser && currentUser["additionalUserInfo"]["isNewUser"]){
+                await userColl.doc(currentUser["user"]["email"]).set({email:currentUser["user"]["email"],
+                                                                      participatingEvents:[],
+                                                                      lastUpdatedLocation:{}})
+            }
             await auth().currentUser.sendEmailVerification()
             // console.log(user["user"]["email"])
             Toast.show({text:"A verfication email has been sent to "+currentUser["user"]["email"],buttonText:"Okay",duration:3000})
@@ -60,7 +68,7 @@ const LoginScreen = (props) => {
             setShowModal(false)
             if(user){
                 await auth().currentUser.sendEmailVerification()
-                Toast.show({text:"A verfication email has been sent to "+user["email"],buttonText:"Okay",duration:3000})
+                Toast.show({text:"A verfication email has been sent to "+user["user"]["email"],buttonText:"Okay",duration:3000})
             }
 
         }

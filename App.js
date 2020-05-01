@@ -39,7 +39,6 @@ const App = () => {
     },[])
 
     const onAuthStateChanged = (user) => {
-      console.log(user)
       if (user && user.emailVerified) {
         setUser(user)
         setLoggedIn(true)

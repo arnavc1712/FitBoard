@@ -8,7 +8,8 @@ import Modal from 'react-native-modal';
 import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import { ConfirmDialog } from 'react-native-simple-dialogs';
-
+import moment from 'moment';
+import messaging from '@react-native-firebase/messaging';
 const mapStyle = [
     {
         "featureType": "administrative.country",
@@ -27,10 +28,8 @@ const mapStyle = [
 const placePhoto = (photoReference) => {
     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${configs["mapsDirectionsKey"]}`
 }
-
-
-
-const ShowEvents = () => {
+const ShowEvents = ({navigation,route}) => {
+    const topic = route.params.topic
     const [events,setEvents] = useState([])
     const [user,setUser] = useState(null)
 
@@ -58,8 +57,19 @@ const ShowEvents = () => {
 
         const getEvents = async() => {
             try{
-            const allEvents = await firestore().collection('Events').get();
-            setEvents(allEvents.docs)
+                if(topic){
+                    let allEvents = await firestore().collection('Events').where("topic","==",topic).get();
+                    // console.log(allEvents)
+                    allEvents = allEvents.docs.sort((a, b) => b.createdAt - a.createdAt)
+                    setEvents(allEvents)
+                }
+                else{
+                    let allEvents = await firestore().collection('Events').get();
+                    allEvents = allEvents.docs.sort((a, b) => b.createdAt - a.createdAt)
+                    setEvents(allEvents)
+                }
+                
+
             
             }
             catch(error){
@@ -86,6 +96,11 @@ const ShowEvents = () => {
         updateUserData()
     },[userData])
     
+    const getNumDays = (date1,date2) => {
+        let a = moment(date1)
+        let b = moment(date2)
+        return a.diff(b,'days')
+    }
 
     const showRoute = (event) => {
         setSource(event.source)
@@ -121,6 +136,11 @@ const ShowEvents = () => {
             }
 
             await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
+            
+            messaging()
+            .subscribeToTopic(`${eventId}`)
+            .then(() => console.log(`Subscribed to topic! ${eventId}`));
+            
             setRegisterDialogVisible(false)
             Toast.show({text:"Successfully Registered",buttonText:"Okay",duration:3000})
         }
@@ -182,7 +202,12 @@ const ShowEvents = () => {
                         
                         <CardItem>
                             {/* <Container> */}
-                                <Left style={{flex:1}}><Text style={{fontSize:12}}>{item._data.registeredUsers.length} Participant(s)</Text></Left>
+                                <View style={{flexDirection:'column'}}>
+                                    <Text style={{fontSize:12}}>{item._data.registeredUsers.length} Participant(s)</Text>
+                                    {getNumDays(new Date(),item._data.createdAt) ? <Text style={{fontSize:12}}>Created {getNumDays(new Date(),item._data.createdAt)} days ago</Text>:<Text style={{fontSize:12}}>NEW</Text>}
+                                    
+                                </View>
+                                
 
                                 <Right style={{flex:1}}>
                                     {item._data.registeredUsers.includes(user["email"]) &&

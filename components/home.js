@@ -12,6 +12,7 @@ import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
 import Track from './track/Track';
+import ProfileScreen from './landing';
 import messaging from '@react-native-firebase/messaging'
 
 

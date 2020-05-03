@@ -37,9 +37,11 @@
     "react-native-chart-kit": "^5.5.0",
     "react-native-clean-project": "^3.3.0",
     "react-native-deck-swiper": "^1.6.7",
+    "react-native-drawer": "^2.5.1",
     "react-native-easy-grid": "^0.2.2",
     "react-native-eject": "^0.1.2",
     "react-native-fontawesome": "^7.0.0",
+    "react-native-elements": "^2.0.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-get-location": "^1.4.2",
     "react-native-google-places-autocomplete": "^1.4.1",
@@ -53,8 +55,12 @@
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.4.0",
     "react-native-simple-dialogs": "^1.2.1",
+<<<<<<< HEAD
     "react-native-svg": "^12.1.0",
     "react-native-svg-charts": "^5.4.0",
+=======
+    "react-native-tab-view": "^2.14.0",
+>>>>>>> 00300783735323a0b0aa389944200bd685ab3ddd
     "react-native-unimodules": "^0.9.0",
     "react-native-vector-icons": "^6.6.0",
     "react-native-view-overflow": "0.0.5"

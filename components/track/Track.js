@@ -6,7 +6,10 @@ import {
   Text,
   TouchableOpacity,
   Platform,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Alert,
+  Modal,
+  TouchableHighlight
 } from "react-native";
 import MapView, {
   Marker,
@@ -15,27 +18,36 @@ import MapView, {
   PROVIDER_GOOGLE
 } from "react-native-maps";
 import haversine from "haversine";
-
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faCheckSquare, faCoffee,faCheck,faTimesCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { library } from "@fortawesome/fontawesome-svg-core";
+library.add(faCoffee);
+library.add(faCheck);
+library.add(faTimesCircle);
+library.add(faCheckCircle);
 import firestore from '@react-native-firebase/firestore';
 import {getDistance} from './getDistanceOfUsers';
+import EventSummary from './Event';
 import auth from '@react-native-firebase/auth';
+import { abs } from "react-native-reanimated";
 // import {checkPointOnLine} from './checkPointOnLine';
 
 
 const randomColor = require('randomcolor'); // import the script
 
 
-const LATITUDE_DELTA = 0.009;
-const LONGITUDE_DELTA = 0.009;
+const LATITUDE_DELTA = 0.00009;
+const LONGITUDE_DELTA = 0.00009;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
-const EVENT_ID = 'HZPr73HED35xypBWZOQY';
+const EVENT_ID = '8LqQ1yLbl0UTf49IHAMn';
 const MY_ID = 'abhidagar1@gmail.com';
 const eventColl = firestore().collection('Events')
 
 class Track extends React.Component{
     constructor(props) {
         super(props);
+        console.log("Props ", props);
         this.state = {
           latitude: LATITUDE,
           longitude: LONGITUDE,
@@ -46,7 +58,6 @@ class Track extends React.Component{
           totalDistanceTravelled: 0,
           prevLatLng: {},
           eventid: EVENT_ID, //replace this later with props.EVENT_ID
-          evendetails: null,
           myid: null, //replace this later with props.myid
           otherPlayersLocation: {},
           prevLatLng: {},
@@ -54,6 +65,8 @@ class Track extends React.Component{
           routeColor: '#000',
           travelledRouteColor: randomColor(),
           currentPosition: -1,
+          finished: true, 
+          showModal: true,
           coordinate: new AnimatedRegion({
             latitude: LATITUDE,
             longitude: LONGITUDE,
@@ -106,7 +119,7 @@ class Track extends React.Component{
             if (!doc.exists) {
                 console.log('No Event document');
                 } else {
-                // console.log('Event data:', doc.data());
+                console.log('Event data:', doc.data());
                 this.setState({
                     eventData: doc.data(),
                     routeColor: randomColor()
@@ -133,6 +146,18 @@ class Track extends React.Component{
             error => this.setState({ error: error.message }),
             { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
         );
+    }
+
+    checkIfFinished(newCoord){
+      if(!this.state.eventData) return
+      let finish = this.state.eventData.destination;
+      let lat_diff = abs(finish.latitude - newCoord.latitude);
+      let lng_diff = abs(finish.longitude - newCoord.longitude);
+      if(lng_diff <= LATITUDE_DELTA && lat_diff <= LONGITUDE_DELTA){
+        this.setState({
+          finished : true
+        })
+      }
     }
 
     watchPosition(){
@@ -176,8 +201,10 @@ class Track extends React.Component{
 
                 //now send this updated location to firebase also
                 //do so only when the eventid and current location is set
+                this.checkIfFinished(newCoordinate);
                 this.update_firebase_location(newCoordinate);
                 this.getAllDistances();
+
 
             },
             error => console.log(error),
@@ -236,7 +263,76 @@ class Track extends React.Component{
       })
     }
 
+    render_event_map(){
+      return(
+        <View style={styles.container}>
+        <MapView
+          style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          region={this.getMapRegion()}
+          showsUserLocation={true}
+          followUserLocation={true}
+          zoomEnabled={true}
+          
+        >
+          {
+          this.state.eventData && 
+          <Fragment>
+              <Marker 
+                  title="Start"
+                  coordinate = {this.state.eventData.waypoints[0]}
+                  pinColor = {randomColor()}
+              />
+  
+              <Marker 
+                  title={this.state.myid}
+                  coordinate = {{'latitude':this.state.latitude, 'longitude':this.state.longitude}}
+                  pinColor = {randomColor()}
+              />
+              <Polyline
+                  coordinates={this.state.eventData.waypoints}
+                  strokeColor={this.state.routeColor} // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeWidth={6}
+              />
+              <Marker 
+                  title="Finish"
+                  coordinate = {this.state.eventData.destination}
+                  pinColor = {randomColor()}
+              />
+  
+              <Polyline
+                  coordinates={this.state.routeTravelledCoordinates}
+                  strokeColor={this.state.travelledRouteColor} // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeWidth={6}
+              />
+              {
+                  this.displayOtherPlayer()
+              }
+  
+          </Fragment>
+       }
+  
+  
+  
+      </MapView>
+        <View style={styles.statsContainer}>
+        <Text style={styles.stats}>
+            Position : {parseInt(this.state.currentPosition)}
+          </Text>
+          <Text style={styles.stats}>
+            Distance : {parseFloat(this.state.totalDistanceTravelled).toFixed(2)} km
+          </Text>
+          <Text style={styles.stats}>
+            Speed : {parseFloat(this.state.currentSpeed).toFixed(2)} km/hr
+          </Text>
+        </View>
+      </View>
+      )
+
+    }
+
     componentDidMount() {
+
         this.getCurrentUser();
         
         this.populateEventDetail();
@@ -266,107 +362,93 @@ class Track extends React.Component{
         latitude: this.state.latitude,
         longitude: this.state.longitude,
         latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA
+        longitudeDelta: LONGITUDE_DELTA,
+        
     });
 
-    render() {
-        {
-        console.log("My Location ", {'latitude':this.state.latitude, 'longitude':this.state.longitude});
-        if(this.state.otherPlayersLocation){
-          Object.keys(this.state.otherPlayersLocation).map( (keyName, keyIndex) => {
-            console.log("Key ", keyName, "Coords ", this.state.otherPlayersLocation[keyName]);
-          })
-        }
-      }
-        return (
-          <View style={styles.container}>
-            <MapView
-              style={styles.map}
-              provider={PROVIDER_GOOGLE}
-              region={this.getMapRegion()}
-                showsUserLocation={true}
-                // followUserLocation={true}
-            >
-                {
-                this.state.eventData && 
-                <Fragment>
-                    <Marker 
-                        title="Start"
-                        coordinate = {this.state.eventData.waypoints[0]}
-                        pinColor = {randomColor()}
-                    />
-
-                    <Marker 
-                        title={this.state.myid}
-                        coordinate = {{'latitude':this.state.latitude, 'longitude':this.state.longitude}}
-                        pinColor = {randomColor()}
-                    />
-                    <Polyline
-                        coordinates={this.state.eventData.waypoints}
-                        strokeColor={this.state.routeColor} // fallback for when `strokeColors` is not supported by the map-provider
-                        strokeWidth={6}
-                    />
-                    <Marker 
-                        title="Finish"
-                        coordinate = {this.state.eventData.destination}
-                        pinColor = {randomColor()}
-                    />
-
-                    <Polyline
-                        coordinates={this.state.routeTravelledCoordinates}
-                        strokeColor={this.state.travelledRouteColor} // fallback for when `strokeColors` is not supported by the map-provider
-                        strokeWidth={6}
-                    />
-                    {
-                        this.displayOtherPlayer()
-                    }
-
-                </Fragment>
-             }
-
-              {/* <Marker.Animated
-                ref={marker => {
-                  this.marker = marker;
+    create_finish_alert(){
+      return (
+        <View style={styles.container}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.showModal}
+          >
+            
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <FontAwesomeIcon icon={faCheckCircle} size={45} style={{color:'grey',marginBottom:10}}/>
+              <Text style={styles.modalText}>
+                Wohooo !! You have successfully completed the event.</Text>
+              <TouchableHighlight
+                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                onPress={() => {
+                  navigation.navigate('MenuStack',{screen:'ShowEvents'});
                 }}
-                coordinate={this.state.coordinate}
-              /> */}
-{/* 
-                <Polyline
-                    coordinates={this.state.routeTravelledCoordinates}
-                    strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                    strokeColors={[
-                        '#7F0000',
-                        '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
-                        '#B24112',
-                        '#E5845C',
-                        '#238C23',
-                        '#7F0000'
-                    ]}
-                    strokeWidth={6}
-                /> */}
-               {
-
-        
-                }
-
-            </MapView>
-            <View style={styles.statsContainer}>
-            <Text style={styles.stats}>
-                Position : {parseInt(this.state.currentPosition)}
-              </Text>
-              <Text style={styles.stats}>
-                Distance : {parseFloat(this.state.totalDistanceTravelled).toFixed(2)} km
-              </Text>
-              <Text style={styles.stats}>
-                Speed : {parseFloat(this.state.currentSpeed).toFixed(2)} km/hr
-              </Text>
+              >
+                <Text style={styles.textStyle}>View My Statistics for the event</Text>
+              </TouchableHighlight>
             </View>
           </View>
-        );
+        </Modal>
+      </View>
+      )
+
+    }
+
+    render() {
+      console.log(props);
+        // return (
+        //     (!this.state.finished && this.render_event_map()) || 
+        //     (this.state.finished && this.create_finish_alert())
+        // );
       }
 }
 
 const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+    width: 'auto',
+    backgroundColor: '#FDD7E4',
+    alignSelf: 'stretch',
+    textAlign: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+    width: 300
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 20,
+  },
     container: {
       ...StyleSheet.absoluteFillObject,
       justifyContent: "flex-end",

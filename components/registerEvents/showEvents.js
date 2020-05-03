@@ -29,9 +29,10 @@ const placePhoto = (photoReference) => {
     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${configs["mapsDirectionsKey"]}`
 }
 const ShowEvents = ({navigation,route}) => {
-    const topic = route.params.topic
+    // const topic = route.params.topic
     const [events,setEvents] = useState([])
     const [user,setUser] = useState(null)
+    const [userTopics,setUserTopics] = useState([])
 
     const [source,setSource] = useState({})
     const [destination,setDestination] = useState({})
@@ -52,13 +53,14 @@ const ShowEvents = ({navigation,route}) => {
             // console.log(currUser)
             let uData = await userColl.doc(currUser["email"]).get()
             setUserData(uData._data)
+            setUserTopics(uData._data.topics)
             // console.log(uData._data)
         })
 
         const getEvents = async() => {
             try{
-                if(topic){
-                    let allEvents = await firestore().collection('Events').where("topic","==",topic).get();
+                if(userTopics && userTopics.length>0){
+                    let allEvents = await firestore().collection('Events').where("topic","in",userTopics).get();
                     // console.log(allEvents)
                     allEvents = allEvents.docs.sort((a, b) => b.createdAt - a.createdAt)
                     setEvents(allEvents)

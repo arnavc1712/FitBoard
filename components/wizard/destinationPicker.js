@@ -52,6 +52,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,p
     },[pathArr,selectedIndex])
 
     useEffect(()=>{
+
         if(currLocation["name"]!=''){
             getPaths();
             setSelectedIndex(0)

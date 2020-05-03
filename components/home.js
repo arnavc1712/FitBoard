@@ -11,6 +11,7 @@ import LogoutScreen from './logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
+import ProfileScreen from './landing';
 import messaging from '@react-native-firebase/messaging'
 
 

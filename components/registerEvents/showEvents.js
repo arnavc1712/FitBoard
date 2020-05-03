@@ -9,6 +9,7 @@ import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from
 import MapViewDirections from 'react-native-maps-directions';
 import { ConfirmDialog } from 'react-native-simple-dialogs';
 import moment from 'moment';
+import Swiper from 'react-native-deck-swiper'
 
 const mapStyle = [
     {
@@ -35,7 +36,7 @@ const ShowEvents = ({navigation,route}) => {
     // const topic = route.params.topic
     const [events,setEvents] = useState([])
     const [user,setUser] = useState(null)
-    const [userTopics,setUserTopics] = useState([])
+    const [cardIndex,setCardIndex] = useState(0)
 
     const [source,setSource] = useState({})
     const [destination,setDestination] = useState({})
@@ -51,55 +52,53 @@ const ShowEvents = ({navigation,route}) => {
 
     useEffect(()=>{
 
-        const subscriber = auth().onAuthStateChanged(async(currUser)=>{
+        const UserSubscriber = auth().onAuthStateChanged(async(currUser)=>{
             setUser(currUser)
             // console.log(currUser)
             let uData = await userColl.doc(currUser["email"]).get()
             setUserData(uData._data)
-            setUserTopics(uData._data.topics)
-            // console.log(uData._data)
+            // setUserTopics(uData._data.topics)
         })
 
-        const getEvents = async() => {
-            try{
-                if(userTopics && userTopics.length>0){
-                    let allEvents = await firestore().collection('Events').where("topic","in",userTopics).get();
-                    // console.log(allEvents)
-                    allEvents = allEvents.docs.sort((a, b) => b.createdAt - a.createdAt)
-                    setEvents(allEvents)
-                }
-                else{
-                    let allEvents = await firestore().collection('Events').get();
-                    allEvents = allEvents.docs.sort((a, b) => b.createdAt - a.createdAt)
-                    setEvents(allEvents)
-                }
-                
-
-            
-            }
-            catch(error){
-                console.log(error)
-            }
-        }
-
-        getEvents()
         // console.log(events)
-        return subscriber
+        return UserSubscriber
 
     },[])
 
-
-
     useEffect(()=>{
-        // console.log(user)
-        const updateUserData = async () => {
-            if(user){
-                // console.log("In user")
-                await userColl.doc(user["email"]).update(userData)
+        
+        if(user){
+            // setUser(user)
+            // console.log(userTopics)
+            const subscriber = firestore()
+                            .collection('Users')
+                            .doc(user["email"])
+                            .onSnapshot(documentSnapshot => {
+                                const participatingEvents= documentSnapshot.data().participatingEvents
+                                eventColl.get().then((data)=>{
+                                    let eventsData = data.docs
+                                    // console.log(eventsData)
+                                    
+                                    eventsData =  eventsData.filter((event)=>{
+                                                                    
+                                                                            if(!participatingEvents.includes(event.id) && userData.topics.includes(event._data.topic)){
+                                                                                return true
+                                                                            }
+                                                                            else{
+                                                                                return false
+                                                                            }
+                                                                        })
+                                                            
+                                    setEvents(eventsData)
+                                    // console.log(eventsData)
+                                }) 
+                                
+                            });
+            return subscriber;
             }
-        }
-        updateUserData()
-    },[userData])
+        
+
+    },[user,userData])
     
     const getNumDays = (date1,date2) => {
         let a = moment(date1)
@@ -115,32 +114,15 @@ const ShowEvents = ({navigation,route}) => {
 
     }
 
-
     const onRegister = async () => {
         try{
-            // setDialogVisible(true)
             const eventId = currEvent.id
-            let registeredUsers = currEvent._data.registeredUsers
-            let registeredEvents = userData.participatingEvents
-                 // Updating events which a  user has participated in
-
             
-            if (!registeredUsers.includes(user["email"])){
-                registeredUsers.push(user["email"])
-                registeredEvents.push(eventId)
-                if(registeredEvents){
-                    registeredEvents.push(eventId)
-                }
-                else{
-                    registeredEvents = [newEvent.id]
-                }
-                
-                setUserData({email:userData.email,
-                             lastUpdatedLocation:userData.lastUpdatedLocation,
-                            participatingEvents:registeredEvents})
+            if(user){
+                userColl.doc(user["email"]).update({participatingEvents:firestore.FieldValue.arrayUnion(eventId)})
+                eventColl.doc(eventId).update({registeredUsers:firestore.FieldValue.arrayUnion(user["email"])})
             }
-
-            await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
+            // await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
             setRegisterDialogVisible(false)
             Toast.show({text:"Successfully Registered",buttonText:"Okay",duration:3000})
         }
@@ -150,78 +132,73 @@ const ShowEvents = ({navigation,route}) => {
     }
 
 
-    const onUnregister = async () => {
-        try{
-            const eventId = currEvent.id
-            let registeredUsers = currEvent._data.registeredUsers
-            let registeredEvents = userData.participatingEvents
-            if (registeredUsers.includes(user["email"])){
-                let index = registeredUsers.indexOf(user["email"]);
-                registeredUsers.splice(index,1)
-                index = registeredEvents.indexOf(eventId)
-                registeredEvents.splice(index,1)
-                setUserData({email:userData.email,
-                    lastUpdatedLocation:userData.lastUpdatedLocation,
-                   participatingEvents:registeredEvents})
 
-            }
 
-            await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
-            setUnregisterDialogVisible(false)
-            Toast.show({text:"Successfully Unregistered",buttonText:"Okay",duration:3000})
-        }
-        catch(error){
-            console.log(error)
-        }
-    }
-    // console.log(events)
+
     
     return (
         <Container>
-            <View>
-                {events!=null && events.length>0 && <DeckSwiper
-                dataSource={events}
-                renderItem={item =>
-                    <Card style={{ elevation: 5 }}>
-                        <CardItem>
-                            <Left>
-                                <Thumbnail source={{uri:placePhoto(item._data.photoReference)}} />
-                                <Body style={{flex:1}}>
-                                    <Text>{item._data.type}</Text>
-                                    <Text note>{item._data.distance}</Text>
-                                    <Text note style={{fontSize:10}}>{item._data.locationName}</Text>
-                                </Body>
-                                </Left>
-                            <Right>
-                                <Button rounded style={{backgroundColor:'#ec407a'}} onPress={()=>showRoute(item._data)}><Text style={{fontSize:12}}>Show Route</Text></Button>
-                            </Right>
-                        </CardItem>
-                        <CardItem cardBody>
-                            <Image style={styles.cardImage} source={{uri:placePhoto(item._data.photoReference)}} />
-                        </CardItem>
-                        
-                        <CardItem>
-                            {/* <Container> */}
-                                <View style={{flexDirection:'column'}}>
-                                    <Text style={{fontSize:12}}>{item._data.registeredUsers.length} Participant(s)</Text>
-                                    {getNumDays(new Date(),item._data.createdAt) ? <Text style={{fontSize:12}}>Created {getNumDays(new Date(),item._data.createdAt)} days ago</Text>:<Text style={{fontSize:12}}>NEW</Text>}
-                                    
-                                </View>
-                                
+            <View style={styles.container}>
+                {events && events.length>0 && <Swiper
+                    cards={events}
 
-                                <Right style={{flex:1}}>
-                                    {item._data.registeredUsers.includes(user["email"]) &&
-                                        <Button bordered rounded danger onPress={()=>{setUnregisterDialogVisible(true);setCurrEvent(item)}}><Text>Unregister</Text></Button>}
-                                    {!item._data.registeredUsers.includes(user["email"]) &&
-                                        <Button bordered rounded onPress={()=>{setRegisterDialogVisible(true);setCurrEvent(item)}}><Text>Register</Text></Button>}
-                                    
-                                </Right>
-                            {/* </Container> */}
-                        </CardItem>
+                    renderCard={(item,index) => {
+                        // console.log("Inside Card")
+                        // console.log(events)
+                        // console.log(item)
+                        if(item){
+                        return (
+                            <Card style={{ elevation: 5 }}>
+                                <CardItem>
+                                    <Left>
+                                        {item._data.type=="Marathon" && <Thumbnail source={require('../../assets/images/running1.png')} />}
+                                        {item._data.type=="Cyclathon" && <Thumbnail source={require('../../assets/images/cycling.jpg')} />}
+                                        
+                                        <Body style={{flex:1}}>
+                                            <Text>{item._data.type}</Text>
+                                            <Text note>{item._data.distance}</Text>
+                                            <Text note style={{fontSize:10}}>{item._data.locationName}</Text>
+                                        </Body>
+                                        </Left>
+                                    <Right>
+                                        <Button rounded style={{backgroundColor:'#ec407a'}} onPress={()=>showRoute(item._data)}><Text style={{fontSize:12}}>Show Route</Text></Button>
+                                    </Right>
+                                </CardItem>
+                                <CardItem cardBody>
+                                    <Image style={styles.cardImage} source={{uri:placePhoto(item._data.photoReference)}} />
+                                </CardItem>
+                        
+                                <CardItem>
+                                        <View style={{flexDirection:'column'}}>
+                                            <Text style={{fontSize:12}}>{item._data.registeredUsers?item._data.registeredUsers.length:null} Participant(s)</Text>
+                                            {getNumDays(new Date(),item._data.createdAt) ? <Text style={{fontSize:12}}>Created {getNumDays(new Date(),item._data.createdAt)} days ago</Text>:<Text style={{fontSize:12}}>NEW</Text>}
+                                            
+                                        </View>
+                                        
+
+                                        <Right style={{flex:1}}>
+                                            {item._data.registeredUsers.includes(user["email"]) &&
+                                                <Button bordered rounded danger onPress={()=>{setUnregisterDialogVisible(true);setCurrEvent(item)}}><Text>Unregister</Text></Button>}
+                                            {!item._data.registeredUsers.includes(user["email"]) &&
+                                                <Button bordered rounded onPress={()=>{setRegisterDialogVisible(true);setCurrEvent(item)}}><Text>Register</Text></Button>}
+                                            
+                                        </Right>
+                                </CardItem>
                     
                     </Card>
-                }
-                />}
+                        )
+                    }
+                    else{
+                        return (null)
+                    }
+                    }}
+                    cardIndex={0}
+                    infinite={true}
+                    
+                    backgroundColor={'#FFF'}
+                    stackSize= {1}>
+                   
+                </Swiper>}
             </View>
 
             <ConfirmDialog
@@ -270,8 +247,8 @@ const ShowEvents = ({navigation,route}) => {
                         initialRegion={{
                             latitude: source.latitude,
                             longitude: source.longitude,
-                            latitudeDelta: 0.015,
-                            longitudeDelta: 0.0121,
+                            latitudeDelta: 0.15,
+                            longitudeDelta: 0.15,
                         }}
                     >
                 
@@ -335,7 +312,11 @@ const styles = StyleSheet.create({
         color:'white',
         fontSize:24,
         fontWeight:'400'
-    }
+    },
+    container: {
+        flex: 1,
+        backgroundColor: "#F5FCFF"
+      },
 })
 
 export default ShowEvents

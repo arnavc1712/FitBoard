@@ -30,7 +30,6 @@ import {getDistance} from './getDistanceOfUsers';
 
 import auth from '@react-native-firebase/auth';
 import { abs } from "react-native-reanimated";
-// import {checkPointOnLine} from './checkPointOnLine';
 
 
 const randomColor = require('randomcolor'); // import the script

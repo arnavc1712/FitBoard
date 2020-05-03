@@ -120,8 +120,6 @@ const ShowEvents = ({navigation,route}) => {
                 userColl.doc(user["email"]).update({participatingEvents:firestore.FieldValue.arrayUnion(eventId)})
                 eventColl.doc(eventId).update({registeredUsers:firestore.FieldValue.arrayUnion(user["email"])})
             }
-
-            await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
             
             messaging()
             .subscribeToTopic(`${eventId}`)

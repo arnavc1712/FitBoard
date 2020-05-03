@@ -4,9 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from "./landing"
 import Wizard from './wizard/wizard'
 import ShowEvents from './registerEvents/showEvents'
-import EventSummary from './track/Event';
 const Stack = createStackNavigator();
-
 
 const MenuStack = ({navigation,route}) => {
    console.log("Inside menu stack ", route.params);

@@ -4,18 +4,18 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Menu from "./menu"
 import Wizard from './wizard/wizard'
 import ShowEvents from './registerEvents/showEvents'
+import EventSummary from './track/Event';
 const Stack = createStackNavigator();
 
 
 const MenuStack = ({navigation,route}) => {
-   
-    
+   console.log("Inside menu stack ", route.params);
     return (
        <Stack.Navigator>
            <Stack.Screen name="Menu" component={Menu} />
            <Stack.Screen name="Wizard" component={Wizard}/>
            <Stack.Screen name="ShowEvents" component={ShowEvents}/>
-
+           <Stack.Screen name="EventSummary" component={EventSummary} initialParams={route.params}/>
        </Stack.Navigator>
        
     )

@@ -27,7 +27,7 @@ library.add(faTimesCircle);
 library.add(faCheckCircle);
 import firestore from '@react-native-firebase/firestore';
 import {getDistance} from './getDistanceOfUsers';
-import EventSummary from './Event';
+
 import auth from '@react-native-firebase/auth';
 import { abs } from "react-native-reanimated";
 // import {checkPointOnLine} from './checkPointOnLine';
@@ -47,7 +47,7 @@ const eventColl = firestore().collection('Events')
 class Track extends React.Component{
     constructor(props) {
         super(props);
-        console.log("Props ", props);
+        this.navigation = props.navigation;
         this.state = {
           latitude: LATITUDE,
           longitude: LONGITUDE,
@@ -175,7 +175,6 @@ class Track extends React.Component{
                     longitude
                 };
               
-
                 //update and move the marker
                 if (Platform.OS === "android") {
                     if (this.marker) {
@@ -202,7 +201,8 @@ class Track extends React.Component{
                 //now send this updated location to firebase also
                 //do so only when the eventid and current location is set
                 this.checkIfFinished(newCoordinate);
-                this.update_firebase_location(newCoordinate);
+                if(speed_val != 0)
+                  this.update_firebase_location(newCoordinate);
                 this.getAllDistances();
 
 
@@ -368,6 +368,7 @@ class Track extends React.Component{
 
     create_finish_alert(){
       return (
+        this.state.eventData && 
         <View style={styles.container}>
           <Modal
             animationType="slide"
@@ -383,13 +384,16 @@ class Track extends React.Component{
               <TouchableHighlight
                 style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                 onPress={() => {
-                  navigation.navigate('MenuStack',{screen:'ShowEvents'});
+                  this.setState({showModal: false});
+                  this.navigation.navigate('MenuStack',{screen:'EventSummary', myid : this.state.myid, eventId: this.state.eventid});
                 }}
               >
                 <Text style={styles.textStyle}>View My Statistics for the event</Text>
               </TouchableHighlight>
             </View>
           </View>
+
+          
         </Modal>
       </View>
       )
@@ -397,11 +401,10 @@ class Track extends React.Component{
     }
 
     render() {
-      console.log(props);
-        // return (
-        //     (!this.state.finished && this.render_event_map()) || 
-        //     (this.state.finished && this.create_finish_alert())
-        // );
+        return (
+            (!this.state.finished && this.render_event_map()) || 
+            (this.state.finished && this.create_finish_alert())
+        );
       }
 }
 

@@ -40,12 +40,13 @@ const LATITUDE_DELTA = 0.00009;
 const LONGITUDE_DELTA = 0.00009;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
-const EVENT_ID = '8LqQ1yLbl0UTf49IHAMn';
+const EVENT_ID = 'HZPr73HED35xypBWZOQY';
 const MY_ID = 'abhidagar1@gmail.com';
 const eventColl = firestore().collection('Events')
 
 class Track extends React.Component{
     constructor(props) {
+      console.log("Inside track ", props.navigation, props.route);
         super(props);
         this.navigation = props.navigation;
         this.state = {
@@ -273,7 +274,6 @@ class Track extends React.Component{
           showsUserLocation={true}
           followUserLocation={true}
           zoomEnabled={true}
-          
         >
           {
           this.state.eventData && 
@@ -367,6 +367,7 @@ class Track extends React.Component{
     });
 
     create_finish_alert(){
+      console.log("Inside create finish alert");
       return (
         this.state.eventData && 
         <View style={styles.container}>
@@ -385,7 +386,7 @@ class Track extends React.Component{
                 style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                 onPress={() => {
                   this.setState({showModal: false});
-                  this.navigation.navigate('MenuStack',{screen:'EventSummary', myid : this.state.myid, eventId: this.state.eventid});
+                  this.navigation.navigate('TrackMenu',{screen:'EventSummary', myid : this.state.myid, eventId: this.state.eventid});
                 }}
               >
                 <Text style={styles.textStyle}>View My Statistics for the event</Text>

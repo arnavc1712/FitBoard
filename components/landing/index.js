@@ -1,18 +1,22 @@
+import Profile from './profile'
 import React, {Component,useState,useEffect} from 'react';
 import {Container,Text,Content,Header, Icon, Picker, Form,Button,Item,Input} from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
-import {View,StyleSheet,Image} from 'react-native';
+import {View,StyleSheet,Image,ScrollView} from 'react-native';
 import GetLocation from 'react-native-get-location'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import configs from "../conf.json"
+import configs from "../../conf.json"
 import messaging from '@react-native-firebase/messaging';
+import RegisteredEvents from './registeredEvents'
 
 
-const Menu = ({navigation}) => {
+const ProfileScreen = ({navigation}) => {
 
     const [currLocation,setCurrLocation] = useState({latitude:null,longitude:null})
     const [topic,setTopic] = useState(null)
+    const [user,setUser] = useState(null)
+    const [showModal,setShowModal] = useState(false)
     let state = ''
     let zipCode = ''
     let country = ''
@@ -21,6 +25,7 @@ const Menu = ({navigation}) => {
     // console.log("Rendered")
     const onAuthChanged = async(user) => {
         try{
+            setUser(user)
             const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
             let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
             // console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=${coordObj.latitude},${coordObj.longitude}&key=${configs.mapsDirectionsKey}`)
@@ -70,37 +75,35 @@ const Menu = ({navigation}) => {
 			// getCurrPos();
 		return subscriber
     },[])
-    
-    return (
 
-        <Grid style={styles.grid}>
-            <Row style={styles.row1} size={1}></Row>
-            <Row style={styles.row2} size={1}>
+
+    return(
+        <ScrollView style={styles.scroll}>
+            <View>
+                <Profile/>
+                <View style={{alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                 <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'Wizard',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Create Event </Text></Button>
-                <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>
-            </Row>
-        </Grid>
-       
+                    <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>
+                </View>
+                <RegisteredEvents user={user}/>
+            </View>
+        </ScrollView>
+
+        
     )
 }
 
+
 const styles = StyleSheet.create({
-    grid:{
-        alignItems:'center',
-    },
-    row2:{
-        // backgroundColor:'green'
-    },
     button:{
         width:'40%',
         height:50,
         alignSelf:'center',
         margin:10,
     },
-    form:{
-        flex:1,
-        justifyContent : 'center'
-    },
-    
+    scroll:{
+        backgroundColor:'white'
+    }
 })
-export default Menu;
+
+export default ProfileScreen

@@ -5,9 +5,6 @@ import firestore from '@react-native-firebase/firestore';
 import EventScreen from './eventInfo';
 import Modal from 'react-native-modal';
 
-
-
-
 const RegisteredEvents = ({user, navigation}) => {
     const eventColl = firestore().collection('Events')
     const userColl = firestore().collection('Users')
@@ -122,11 +119,12 @@ const RegisteredEvents = ({user, navigation}) => {
                         <Text>{event._data.type} ({event._data.distance})</Text>
                     </Left>
                     <Right style={{flex:1}}>
-                    {!event._data.started && 
-                    <Button bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
+    
+                    { !event._data.started &&
+                    <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
                     }
                     {event._data.started &&
-                    <Button bordered rounded onPress={()=>onStart(event)}><Text>Participate</Text></Button>
+                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>Participate</Text></Button>
                     }
                     </Right>
                 </ListItem>

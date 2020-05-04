@@ -31,8 +31,8 @@ import {getDistance} from './getDistanceOfUsers';
 
 import auth from '@react-native-firebase/auth';
 import { abs } from "react-native-reanimated";
-
-
+import configs from '../../conf.json'
+import MapViewDirections from 'react-native-maps-directions';
 const randomColor = require('randomcolor'); // import the script
 
 
@@ -47,7 +47,7 @@ const eventColl = firestore().collection('Events')
 const  Track = ({route, navigation}) =>{
   // console.log(route.params)
   const eventid = route.params.eventId;
-  const routeColor = '#000';
+  
   // const savedCallback = useRef();
   const stateRef = useRef({});
   const [latitude, setLatitude] = useState(LATITUDE);
@@ -57,7 +57,7 @@ const  Track = ({route, navigation}) =>{
   const [routeTravelledCoordinates, setRouteTravelledCoordinates] = useState([]);
   const [distanceTravelled, setDistanceTravelled] = useState([]);
   const [totalDistanceTravelled, setTotalDistanceTravelled] = useState(0);
-  
+  const [routeColor, setRouteColor] = useState('#000');
   // const [prevLatLng, setPrevLatLng] = useState({});
   let prevLatLng = {}
   const [myid, setmyid] = useState(null);
@@ -66,7 +66,6 @@ const  Track = ({route, navigation}) =>{
   const [travelledRouteColor, setTravelledRouteColor] = useState(randomColor());
   const [currentPosition, setCurrentPosition] = useState(0);
   const [finished, setFinished] = useState(false); 
-  const [showModal, setShowModal] = useState(false);
   const [coordinate, setCoordinate] = useState(new AnimatedRegion({
             latitude: LATITUDE,
             longitude: LONGITUDE,
@@ -82,7 +81,9 @@ const  Track = ({route, navigation}) =>{
                       latitude:latitude,
                       longitude:longitude,
                       distanceTravelled:distanceTravelled,
-                      routeTravelledCoordinates:routeTravelledCoordinates
+                      routeTravelledCoordinates:routeTravelledCoordinates,
+                      myid: myid,
+                      currentPosition: currentPosition
                     }
 
 
@@ -108,25 +109,25 @@ const  Track = ({route, navigation}) =>{
     
             listenForUpdate();
           }
-    },[]);
+    },[eventid]);
 
     const update_firebase_location = (newCoordinate) => {
         
-        if(eventid != null && myid != null){
+        if(eventid != null && stateRef.current.myid != null){
             const collection_name = eventid;
-            const doc_name = myid;
+            const doc_name = stateRef.current.myid;
             let res = {};
             res['coordinate'] = newCoordinate;
-            res['user'] = myid;
-            res['route'] = routeTravelledCoordinates;
-            res['distance'] = distanceTravelled;
-            res['total_distance'] = totalDistanceTravelled;
-            res['speed'] = speed;
-            // console.log("Inside update_firebase_location", res);
+            res['user'] = stateRef.current.myid;
+            res['route'] = stateRef.current.routeTravelledCoordinates;
+            res['distance'] = stateRef.current.distanceTravelled;
+            res['total_distance'] = stateRef.current.totalDistanceTravelled;
+            res['speed'] = stateRef.current.speed;
+            console.log("Inside update_firebase_location", res);
             firestore().collection(collection_name).doc(doc_name).set(res);
         }
         else{
-            // console.log("EVENTID NULL");
+            console.log("EVENTID NULL");
             return;
         }
     }
@@ -138,9 +139,10 @@ const  Track = ({route, navigation}) =>{
         getDistance(eventid)
         .then((distance_ranking) =>{
             if(!distance_ranking) return;
-            // console.log("Total Distance ", distance_ranking);
-            // console.log("Position ", distance_ranking.indexOf(myid))
-            setCurrentPosition(distance_ranking.indexOf(myid)+1);
+            console.log("Total Distance ", distance_ranking);
+            console.log("Myid ", stateRef.current.myid);
+            console.log("Position ", distance_ranking.indexOf(stateRef.current.myid))
+            setCurrentPosition(distance_ranking.indexOf(stateRef.current.myid)+1);
         })
 
     }
@@ -222,10 +224,6 @@ const  Track = ({route, navigation}) =>{
                 let _distanceTravelled = stateRef.current.distanceTravelled.concat([calcDistance(newLatLngs)]);
                 let _total_distance = stateRef.current.totalDistanceTravelled + calcDistance(newLatLngs);
                 let _routeTravelledCoordinates = stateRef.current.routeTravelledCoordinates.concat([newCoordinate]);
-                // console.log("############################");
-                // console.log(speed, distanceTravelled, totalDistanceTravelled, routeTravelledCoordinates, prevLatLng)
-                // console.log(_speed, _distanceTravelled, _total_distance, _routeTravelledCoordinates);
-                // console.log("######################n######");
                 setSpeed(_speed);
                 
                 setCurrentSpeed(speed_val);
@@ -241,10 +239,10 @@ const  Track = ({route, navigation}) =>{
                 console.log(stateRef.current)
                 //now send this updated location to firebase also
                 //do so only when the eventid and current location is set
-                checkIfFinished(newCoordinate);
-                if(speed_val != 0)
-                  update_firebase_location(newCoordinate);
+                update_firebase_location(newCoordinate);
                 getAllDistances();
+                checkIfFinished(newCoordinate);
+                
 
 
             },
@@ -269,7 +267,7 @@ const  Track = ({route, navigation}) =>{
                 let data = doc.data();
                 let userid = data.user;
 
-                if(userid == myid) return;
+                if(userid == stateRef.current.myid) return;
                 let user_location = data.coordinate;
                 otherPlayersLocation[userid] = user_location;
             });
@@ -291,6 +289,7 @@ const  Track = ({route, navigation}) =>{
       // console.log("Inside Display Other Player")
       let keys = Object.keys(otherPlayersLocation);
       return keys.map( (keyName, keyIndex) => {
+      
         return <Marker
             coordinate={otherPlayersLocation[keyName]}
             title={keyName}
@@ -301,6 +300,10 @@ const  Track = ({route, navigation}) =>{
     }
 
     const render_event_map = () => {
+      if(eventData){
+        console.log("First waypoint , Source, Destination, currentLocation");
+        console.log(eventData.waypoints[0], eventData.source, eventData.destination);
+      }
       return(
         <View style={styles.container}>
         <MapView
@@ -316,7 +319,7 @@ const  Track = ({route, navigation}) =>{
           <Fragment>
               <Marker 
                   title="Start"
-                  coordinate = {eventData.waypoints[0]}
+                  coordinate = {eventData.source}
                   pinColor = {randomColor()}
               />
   
@@ -325,11 +328,20 @@ const  Track = ({route, navigation}) =>{
                   coordinate = {{'latitude':latitude, 'longitude':longitude}}
                   pinColor = {randomColor()}
               />
-              <Polyline
+              <MapViewDirections
+                origin={eventData.source}
+                destination={eventData.destination}
+                apikey={configs["mapsDirectionsKey"]}
+                waypoints={eventData.waypoints}
+                strokeWidth={6}
+                strokeColor={routeColor}
+            />
+
+              {/* <Polyline
                   coordinates={eventData.waypoints}
                   strokeColor={routeColor} // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={6}
-              />
+              /> */}
               <Marker 
                   title="Finish"
                   coordinate = {eventData.destination}
@@ -386,13 +398,13 @@ const  Track = ({route, navigation}) =>{
     const create_finish_alert = () => {
       console.log("Inside create finish alert");
       return (
-        eventData && 
+        eventData && finished && 
         <View style={styles.container}>
-          <Modal
+          {/* <Modal
             animationType="slide"
             transparent={true}
             visible={showModal}
-          >
+          > */}
             
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
@@ -402,8 +414,7 @@ const  Track = ({route, navigation}) =>{
               <TouchableHighlight
                 style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                 onPress={() => {
-                  setShowModal(false);
-                  navigation.navigate('TrackMenu',{screen:'EventSummary', myid : myid, eventId: eventid});
+                  navigation.navigate('TrackMenu',{screen:'EventSummary', myid : stateRef.current.myid, eventId: eventid});
                 }}
               >
                 <Text style={styles.textStyle}>View My Statistics for the event</Text>
@@ -411,8 +422,8 @@ const  Track = ({route, navigation}) =>{
             </View>
           </View>
 
-          
-        </Modal>
+{/*           
+        </Modal> */}
       </View>
       )
 

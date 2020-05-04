@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import {useState,useEffect} from 'react';
+import {useState,useEffect,useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -45,9 +45,11 @@ const MY_ID = 'abhidagar1@gmail.com';
 const eventColl = firestore().collection('Events')
 
 const  Track = ({route, navigation}) =>{
-  console.log(route.params)
+  // console.log(route.params)
   const eventid = route.params.eventId;
   const routeColor = '#000';
+  // const savedCallback = useRef();
+  const stateRef = useRef({});
   const [latitude, setLatitude] = useState(LATITUDE);
   const [longitude, setLongitude] =  useState(LONGITUDE);
   const [speed, setSpeed] = useState([]);
@@ -55,8 +57,9 @@ const  Track = ({route, navigation}) =>{
   const [routeTravelledCoordinates, setRouteTravelledCoordinates] = useState([]);
   const [distanceTravelled, setDistanceTravelled] = useState([]);
   const [totalDistanceTravelled, setTotalDistanceTravelled] = useState(0);
+  
   // const [prevLatLng, setPrevLatLng] = useState({});
-  let prevLatLng = null;
+  let prevLatLng = {}
   const [myid, setmyid] = useState(null);
   const [otherPlayersLocation, setOtherPlayerLocation] = useState({});
   const [eventData, setEventData] = useState(null);
@@ -72,14 +75,25 @@ const  Track = ({route, navigation}) =>{
           }));
   var watchId = null;
 
+  stateRef.current = {
+                      speed:speed,
+                      currentSpeed:currentSpeed,
+                      totalDistanceTravelled:totalDistanceTravelled,
+                      latitude:latitude,
+                      longitude:longitude,
+                      distanceTravelled:distanceTravelled,
+                      routeTravelledCoordinates:routeTravelledCoordinates
+                    }
 
-      useEffect(()=>{
-        console.log("########### SPEEED #########")
-        console.log(speed)
-      },[speed])
+
+      // useEffect(()=>{
+      //   // console.log("########### SPEEED #########")
+      //   // console.log(speed)
+      // },[speed])
 
       useEffect(()=>{
           // setEventId(route.params.eventId)
+          // savedCallback.settingSpeed = settingSpeed
           console.log(`Event Id is ${eventid}`)
           if(eventid){
             getCurrentUser();
@@ -108,22 +122,24 @@ const  Track = ({route, navigation}) =>{
             res['distance'] = distanceTravelled;
             res['total_distance'] = totalDistanceTravelled;
             res['speed'] = speed;
-            console.log("Inside update_firebase_location", res);
+            // console.log("Inside update_firebase_location", res);
             firestore().collection(collection_name).doc(doc_name).set(res);
         }
         else{
-            console.log("EVENTID NULL");
+            // console.log("EVENTID NULL");
             return;
         }
     }
+
+
 
     const getAllDistances =  async () => {
         //getDistanceTravelledForAllUsers
         getDistance(eventid)
         .then((distance_ranking) =>{
             if(!distance_ranking) return;
-            console.log("Total Distance ", distance_ranking);
-            console.log("Position ", distance_ranking.indexOf(myid))
+            // console.log("Total Distance ", distance_ranking);
+            // console.log("Position ", distance_ranking.indexOf(myid))
             setCurrentPosition(distance_ranking.indexOf(myid)+1);
         })
 
@@ -131,13 +147,13 @@ const  Track = ({route, navigation}) =>{
 
     const populateEventDetail = () => {
         //getEventDetail
-        console.log("Inside populate Event details ", eventid);
+        // console.log("Inside populate Event details ", eventid);
         let query = eventColl.doc(eventid).get()
         .then(doc => {
             if (!doc.exists) {
-                console.log('No Event document');
+                // console.log('No Event document');
                 } else {
-                console.log('Event data:', doc.data());
+                // console.log('Event data:', doc.data());
                 setEventData(doc.data());
                 setRouteColor(randomColor());
             }
@@ -148,7 +164,7 @@ const  Track = ({route, navigation}) =>{
     }
 
     const getCurrentLocation = () => {
-        console.log("Get current location");
+        // console.log("Get current location");
         //getCurrentLocation
         navigator.geolocation.getCurrentPosition(
           position => {
@@ -176,8 +192,8 @@ const  Track = ({route, navigation}) =>{
         console.log("Inside watch position");
         //watch position
         watchId = navigator.geolocation.watchPosition(
-            position => {
-              
+           (position) => {
+                // console.log(position)
                 // const { routeTravelledCoordinates, speed, totalDistanceTravelled, distanceTravelled} = state;
                 const { latitude, longitude} = position.coords;
                 const speed_val = position.coords.speed < 0 ? 0 : Math.round(position.coords.speed);
@@ -199,19 +215,21 @@ const  Track = ({route, navigation}) =>{
                 //   } else {
                 //     coordinate.timing(newCoordinate).start();
                 // }
-                let _speed = speed.concat([speed_val]);
-                let _distanceTravelled = distanceTravelled.concat([calcDistance(newLatLngs)]);
-                let _total_distance = totalDistanceTravelled + calcDistance(newLatLngs);
-                let _routeTravelledCoordinates = routeTravelledCoordinates.concat([newCoordinate]);
+                // console.log("Speed")
+                // console.log(speed)
+                let _speed = stateRef.current.speed.concat([speed_val]);
+                
+                let _distanceTravelled = stateRef.current.distanceTravelled.concat([calcDistance(newLatLngs)]);
+                let _total_distance = stateRef.current.totalDistanceTravelled + calcDistance(newLatLngs);
+                let _routeTravelledCoordinates = stateRef.current.routeTravelledCoordinates.concat([newCoordinate]);
                 // console.log("############################");
                 // console.log(speed, distanceTravelled, totalDistanceTravelled, routeTravelledCoordinates, prevLatLng)
                 // console.log(_speed, _distanceTravelled, _total_distance, _routeTravelledCoordinates);
-                // console.log("############################");
-                setSpeed(speed => ([...speed, speed_val]));
+                // console.log("######################n######");
+                setSpeed(_speed);
                 
                 setCurrentSpeed(speed_val);
-                console.log("Current Speed")
-                console.log(currentSpeed)
+        
                 setLatitude(position.coords.latitude);
                 setLongitude(position.coords.longitude);
                 setDistanceTravelled(_distanceTravelled);
@@ -219,6 +237,8 @@ const  Track = ({route, navigation}) =>{
                 setRouteTravelledCoordinates(_routeTravelledCoordinates);
                 // setPrevLatLng({latitude: position.coords.latitude, longitude: position.coords.longitude});
                 prevLatLng = {latitude: position.coords.latitude, longitude: position.coords.longitude};
+                console.log("Current States")
+                console.log(stateRef.current)
                 //now send this updated location to firebase also
                 //do so only when the eventid and current location is set
                 checkIfFinished(newCoordinate);
@@ -262,13 +282,13 @@ const  Track = ({route, navigation}) =>{
 
     const getCurrentUser = () => {
       auth().onAuthStateChanged((user) =>{
-        console.log("Current User ", user);
+        // console.log("Current User ", user);
         setmyid(user.email);
       })
     }
 
     const displayOtherPlayer = () => {
-      console.log("Inside Display Other Player")
+      // console.log("Inside Display Other Player")
       let keys = Object.keys(otherPlayersLocation);
       return keys.map( (keyName, keyIndex) => {
         return <Marker
@@ -348,8 +368,9 @@ const  Track = ({route, navigation}) =>{
     }
 
     const calcDistance = (newLatLng) => {
-        console.log(prevLatLng, newLatLng);
-        console.log("Distance ", (haversine(prevLatLng, newLatLng) || 0));
+        // console.log(prevLatLng, newLatLng);
+
+        // console.log("Distance ", (haversine(prevLatLng, newLatLng) || 0));
         return (haversine(prevLatLng, newLatLng) || 0)
       }
 

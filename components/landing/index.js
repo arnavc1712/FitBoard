@@ -85,7 +85,7 @@ const ProfileScreen = ({navigation}) => {
                 <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'Wizard',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Create Event </Text></Button>
                     <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>
                 </View>
-                <RegisteredEvents user={user}/>
+                <RegisteredEvents user={user} navigation={navigation}/>
             </View>
         </ScrollView>
 

@@ -7,11 +7,12 @@ const Stack = createStackNavigator();
 
 
 const TrackMenu = ({navigation,route}) => {
-   console.log("Inside track stack ", route.params);
+    const [eventId, setEventId] = useState(route.params.eventId);   
+   console.log("Inside track stack ", eventId);
     return (
        <Stack.Navigator initialRouteName="Track">
-           <Stack.Screen name="Track" component={Track} />
-           <Stack.Screen name="EventSummary" component={EventSummary} initialParams={route.params}/>
+           <Stack.Screen name="Track" component={Track} initialParams = {{"eventId" : eventId}}/>
+           <Stack.Screen name="EventSummary" component={EventSummary}/>
        </Stack.Navigator>
     )
 }

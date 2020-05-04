@@ -5,10 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import EventScreen from './eventInfo';
 import Modal from 'react-native-modal';
 
-
-
-
-const RegisteredEvents = ({user}) => {
+const RegisteredEvents = ({user, navigation}) => {
     const eventColl = firestore().collection('Events')
     const userColl = firestore().collection('Users')
     const [userData,setUserData] = useState(null)
@@ -99,6 +96,12 @@ const RegisteredEvents = ({user}) => {
         setCurrEvent(event)
     }
 
+    const onStart = (event) => {
+        console.log("Event start clicked ", event);
+        navigation.navigate('TrackMenu',{screen:'Track', params:{eventId: event.id}});
+        
+    }
+
     // useEffect(()=>{
     //     console.log(eventList)
     // },[eventList])
@@ -116,7 +119,13 @@ const RegisteredEvents = ({user}) => {
                         <Text>{event._data.type} ({event._data.distance})</Text>
                     </Left>
                     <Right style={{flex:1}}>
-                    <Button bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
+    
+                    { !event._data.started &&
+                    <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
+                    }
+                    {event._data.started &&
+                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>Participate</Text></Button>
+                    }
                     </Right>
                 </ListItem>
                 )}

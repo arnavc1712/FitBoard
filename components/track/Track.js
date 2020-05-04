@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import {useState,useEffect,useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -30,64 +31,98 @@ import {getDistance} from './getDistanceOfUsers';
 
 import auth from '@react-native-firebase/auth';
 import { abs } from "react-native-reanimated";
-
-
+import configs from '../../conf.json'
+import MapViewDirections from 'react-native-maps-directions';
 const randomColor = require('randomcolor'); // import the script
 
 
-const LATITUDE_DELTA = 0.00009;
-const LONGITUDE_DELTA = 0.00009;
+const LATITUDE_DELTA = 0.0009;
+const LONGITUDE_DELTA = 0.0009;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
 const EVENT_ID = 'HZPr73HED35xypBWZOQY';
 const MY_ID = 'abhidagar1@gmail.com';
 const eventColl = firestore().collection('Events')
 
-class Track extends React.Component{
-    constructor(props) {
-      console.log("Inside track ", props.navigation, props.route);
-        super(props);
-        this.navigation = props.navigation;
-        this.state = {
-          latitude: LATITUDE,
-          longitude: LONGITUDE,
-          speed: [],
-          currentSpeed : 0,
-          routeTravelledCoordinates: [],
-          distanceTravelled:[],
-          totalDistanceTravelled: 0,
-          prevLatLng: {},
-          eventid: EVENT_ID, //replace this later with props.EVENT_ID
-          myid: null, //replace this later with props.myid
-          otherPlayersLocation: {},
-          prevLatLng: {},
-          eventData: null,
-          routeColor: '#000',
-          travelledRouteColor: randomColor(),
-          currentPosition: -1,
-          finished: true, 
-          showModal: true,
-          coordinate: new AnimatedRegion({
+const  Track = ({route, navigation}) =>{
+  // console.log(route.params)
+  const eventid = route.params.eventId;
+  
+  // const savedCallback = useRef();
+  const stateRef = useRef({});
+  const [latitude, setLatitude] = useState(LATITUDE);
+  const [longitude, setLongitude] =  useState(LONGITUDE);
+  const [speed, setSpeed] = useState([]);
+  const [currentSpeed, setCurrentSpeed] = useState(0);
+  const [routeTravelledCoordinates, setRouteTravelledCoordinates] = useState([]);
+  const [distanceTravelled, setDistanceTravelled] = useState([]);
+  const [totalDistanceTravelled, setTotalDistanceTravelled] = useState(0);
+  const [routeColor, setRouteColor] = useState('#000');
+  // const [prevLatLng, setPrevLatLng] = useState({});
+  let prevLatLng = {}
+  const [myid, setmyid] = useState(null);
+  const [otherPlayersLocation, setOtherPlayerLocation] = useState({});
+  const [eventData, setEventData] = useState(null);
+  const [travelledRouteColor, setTravelledRouteColor] = useState(randomColor());
+  const [currentPosition, setCurrentPosition] = useState(0);
+  const [finished, setFinished] = useState(false); 
+  const [coordinate, setCoordinate] = useState(new AnimatedRegion({
             latitude: LATITUDE,
             longitude: LONGITUDE,
             latitudeDelta: 0,
             longitudeDelta: 0
-          })
-        };
-      }
+          }));
+  var watchId = null;
 
-    update_firebase_location(newCoordinate){
+  stateRef.current = {
+                      speed:speed,
+                      currentSpeed:currentSpeed,
+                      totalDistanceTravelled:totalDistanceTravelled,
+                      latitude:latitude,
+                      longitude:longitude,
+                      distanceTravelled:distanceTravelled,
+                      routeTravelledCoordinates:routeTravelledCoordinates,
+                      myid: myid,
+                      currentPosition: currentPosition
+                    }
+
+
+      // useEffect(()=>{
+      //   // console.log("########### SPEEED #########")
+      //   // console.log(speed)
+      // },[speed])
+
+      useEffect(()=>{
+          // setEventId(route.params.eventId)
+          // savedCallback.settingSpeed = settingSpeed
+          console.log(`Event Id is ${eventid}`)
+          if(eventid){
+            getCurrentUser();
+          
+            populateEventDetail();
+    
+            getAllDistances();
+    
+            getCurrentLocation();
+            
+            watchPosition();
+    
+            listenForUpdate();
+          }
+    },[eventid]);
+
+    const update_firebase_location = (newCoordinate) => {
         
-        if(this.state.eventid != null && this.state.myid != null){
-            const collection_name = this.state.eventid;
-            const doc_name = this.state.myid;
+        if(eventid != null && stateRef.current.myid != null){
+            const collection_name = eventid;
+            const doc_name = stateRef.current.myid;
             let res = {};
             res['coordinate'] = newCoordinate;
-            res['user'] = this.state.myid;
-            res['route'] = this.state.routeTravelledCoordinates;
-            res['distance'] = this.state.distanceTravelled;
-            res['total_distance'] = this.state.totalDistanceTravelled;
-            res['speed'] = this.state.speed;
+            res['user'] = stateRef.current.myid;
+            res['route'] = stateRef.current.routeTravelledCoordinates;
+            res['distance'] = stateRef.current.distanceTravelled;
+            res['total_distance'] = stateRef.current.totalDistanceTravelled;
+            res['speed'] = stateRef.current.speed;
             console.log("Inside update_firebase_location", res);
             firestore().collection(collection_name).doc(doc_name).set(res);
         }
@@ -97,33 +132,32 @@ class Track extends React.Component{
         }
     }
 
-    async getAllDistances(){
+
+
+    const getAllDistances =  async () => {
         //getDistanceTravelledForAllUsers
-        getDistance(this.state.eventid)
+        getDistance(eventid)
         .then((distance_ranking) =>{
             if(!distance_ranking) return;
             console.log("Total Distance ", distance_ranking);
-            console.log("Position ", distance_ranking.indexOf(this.state.myid))
-            this.setState({
-                currentPosition : distance_ranking.indexOf(this.state.myid)+1
-            })
+            console.log("Myid ", stateRef.current.myid);
+            console.log("Position ", distance_ranking.indexOf(stateRef.current.myid))
+            setCurrentPosition(distance_ranking.indexOf(stateRef.current.myid)+1);
         })
 
     }
 
-    populateEventDetail(){
+    const populateEventDetail = () => {
         //getEventDetail
-        console.log("Inside populate Event details");
-        let query = eventColl.doc(this.state.eventid).get()
+        // console.log("Inside populate Event details ", eventid);
+        let query = eventColl.doc(eventid).get()
         .then(doc => {
             if (!doc.exists) {
-                console.log('No Event document');
+                // console.log('No Event document');
                 } else {
-                console.log('Event data:', doc.data());
-                this.setState({
-                    eventData: doc.data(),
-                    routeColor: randomColor()
-                })
+                // console.log('Event data:', doc.data());
+                setEventData(doc.data());
+                setRouteColor(randomColor());
             }
         })
         .catch(err => {
@@ -131,79 +165,84 @@ class Track extends React.Component{
         });
     }
 
-    getCurrentLocation(){
-        console.log("Get current location");
+    const getCurrentLocation = () => {
+        // console.log("Get current location");
         //getCurrentLocation
         navigator.geolocation.getCurrentPosition(
-            position => {
-            // console.log("Got Current Location", position);
-              this.setState({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                error: null,
-              });
-            },
-            error => this.setState({ error: error.message }),
-            { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
-        );
+          position => {
+          // console.log("Got Current Location", position);
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          },
+          error => console.log(error.message),
+          { enableHighAccuracy: false, timeout: 200000, maximumAge: 1000 }
+      );
     }
 
-    checkIfFinished(newCoord){
-      if(!this.state.eventData) return
-      let finish = this.state.eventData.destination;
+    const checkIfFinished = (newCoord) => {
+      if(!eventData) return
+      let finish = eventData.destination;
       let lat_diff = abs(finish.latitude - newCoord.latitude);
       let lng_diff = abs(finish.longitude - newCoord.longitude);
       if(lng_diff <= LATITUDE_DELTA && lat_diff <= LONGITUDE_DELTA){
-        this.setState({
-          finished : true
-        })
+        setFinished(true);
       }
     }
 
-    watchPosition(){
+    const watchPosition = ()=>{
+        
         console.log("Inside watch position");
         //watch position
-        this.watchID = navigator.geolocation.watchPosition(
-            position => {
-                const { routeTravelledCoordinates, speed, totalDistanceTravelled, distanceTravelled} = this.state;
+        watchId = navigator.geolocation.watchPosition(
+           (position) => {
+                // console.log(position)
+                // const { routeTravelledCoordinates, speed, totalDistanceTravelled, distanceTravelled} = state;
                 const { latitude, longitude} = position.coords;
                 const speed_val = position.coords.speed < 0 ? 0 : Math.round(position.coords.speed);
                 const newLatLngs = {latitude: position.coords.latitude, longitude: position.coords.longitude }
-                console.log("Speed ", speed_val);
+
                 let newCoordinate = {
-                    latitude,
-                    longitude
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude
                 };
               
-                //update and move the marker
-                if (Platform.OS === "android") {
-                    if (this.marker) {
-                      this.marker.animateMarkerToCoordinate(
-                        newCoordinate,
-                        500
-                      );
-                    }
-                  } else {
-                    coordinate.timing(newCoordinate).start();
-                }
-
-                this.setState({
-                    speed: speed.concat([speed_val]),
-                    currentSpeed: speed_val, 
-                    latitude,
-                    longitude,
-                    distanceTravelled: distanceTravelled.concat([this.calcDistance(newLatLngs)]),
-                    totalDistanceTravelled: totalDistanceTravelled + this.calcDistance(newLatLngs),
-                    routeTravelledCoordinates: routeTravelledCoordinates.concat([newCoordinate]),
-                    prevLatLng: newLatLngs
-                });
-
+                // //update and move the marker
+                // if (Platform.OS === "android") {
+                //     if (this && this.marker) {
+                //       this.marker.animateMarkerToCoordinate(
+                //         newCoordinate,
+                //         500
+                //       );
+                //     }
+                //   } else {
+                //     coordinate.timing(newCoordinate).start();
+                // }
+                // console.log("Speed")
+                // console.log(speed)
+                let _speed = stateRef.current.speed.concat([speed_val]);
+                
+                let _distanceTravelled = stateRef.current.distanceTravelled.concat([calcDistance(newLatLngs)]);
+                let _total_distance = stateRef.current.totalDistanceTravelled + calcDistance(newLatLngs);
+                let _routeTravelledCoordinates = stateRef.current.routeTravelledCoordinates.concat([newCoordinate]);
+                setSpeed(_speed);
+                
+                setCurrentSpeed(speed_val);
+        
+                setLatitude(position.coords.latitude);
+                setLongitude(position.coords.longitude);
+                setDistanceTravelled(_distanceTravelled);
+                setTotalDistanceTravelled(_total_distance);
+                setRouteTravelledCoordinates(_routeTravelledCoordinates);
+                // setPrevLatLng({latitude: position.coords.latitude, longitude: position.coords.longitude});
+                prevLatLng = {latitude: position.coords.latitude, longitude: position.coords.longitude};
+                console.log("Current States")
+                console.log(stateRef.current)
                 //now send this updated location to firebase also
                 //do so only when the eventid and current location is set
-                this.checkIfFinished(newCoordinate);
-                if(speed_val != 0)
-                  this.update_firebase_location(newCoordinate);
-                this.getAllDistances();
+                update_firebase_location(newCoordinate);
+                getAllDistances();
+                checkIfFinished(newCoordinate);
+                
 
 
             },
@@ -217,45 +256,42 @@ class Track extends React.Component{
         );
     }
 
-    listenForUpdate(){
+    const listenForUpdate = () => {
         // listen to firebase location updates
         console.log("Inside listener");
-        const ref = firestore().collection(this.state.eventid);
+        const ref = firestore().collection(eventid);
         let observer = ref.onSnapshot(docSnapshot => {
-            var  otherPlayersLocation = this.state.otherPlayersLocation;
+            var  otherPlayersLocation = otherPlayersLocation;
             if(otherPlayersLocation == null) otherPlayersLocation = {};
             docSnapshot.forEach( (doc) => {
                 let data = doc.data();
                 let userid = data.user;
 
-                if(userid == this.state.myid) return;
+                if(userid == stateRef.current.myid) return;
                 let user_location = data.coordinate;
                 otherPlayersLocation[userid] = user_location;
             });
-            this.setState({
-              otherPlayersLocation: otherPlayersLocation
-            });
+            setOtherPlayerLocation(otherPlayersLocation);
         }, 
         err => {
             console.log(`Encountered error: ${err}`);
         });
     }
 
-    getCurrentUser(){
+    const getCurrentUser = () => {
       auth().onAuthStateChanged((user) =>{
-        console.log("Current User ", user);
-        this.setState({
-          myid: user.email
-        })
+        // console.log("Current User ", user);
+        setmyid(user.email);
       })
     }
 
-    displayOtherPlayer(){
-      console.log("Inside Display Other Player")
-      let keys = Object.keys(this.state.otherPlayersLocation);
+    const displayOtherPlayer = () => {
+      // console.log("Inside Display Other Player")
+      let keys = Object.keys(otherPlayersLocation);
       return keys.map( (keyName, keyIndex) => {
+      
         return <Marker
-            coordinate={this.state.otherPlayersLocation[keyName]}
+            coordinate={otherPlayersLocation[keyName]}
             title={keyName}
             key={keyName}
             pinColor={randomColor()}
@@ -263,49 +299,62 @@ class Track extends React.Component{
       })
     }
 
-    render_event_map(){
+    const render_event_map = () => {
+      if(eventData){
+        console.log("First waypoint , Source, Destination, currentLocation");
+        console.log(eventData.waypoints[0], eventData.source, eventData.destination);
+      }
       return(
         <View style={styles.container}>
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
-          region={this.getMapRegion()}
+          region={getMapRegion()}
           showsUserLocation={true}
           followUserLocation={true}
           zoomEnabled={true}
         >
           {
-          this.state.eventData && 
+          eventData && 
           <Fragment>
               <Marker 
                   title="Start"
-                  coordinate = {this.state.eventData.waypoints[0]}
+                  coordinate = {eventData.source}
                   pinColor = {randomColor()}
               />
   
               <Marker 
-                  title={this.state.myid}
-                  coordinate = {{'latitude':this.state.latitude, 'longitude':this.state.longitude}}
+                  title={myid}
+                  coordinate = {{'latitude':latitude, 'longitude':longitude}}
                   pinColor = {randomColor()}
               />
-              <Polyline
-                  coordinates={this.state.eventData.waypoints}
-                  strokeColor={this.state.routeColor} // fallback for when `strokeColors` is not supported by the map-provider
+              <MapViewDirections
+                origin={eventData.source}
+                destination={eventData.destination}
+                apikey={configs["mapsDirectionsKey"]}
+                waypoints={eventData.waypoints}
+                strokeWidth={6}
+                strokeColor={routeColor}
+            />
+
+              {/* <Polyline
+                  coordinates={eventData.waypoints}
+                  strokeColor={routeColor} // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={6}
-              />
+              /> */}
               <Marker 
                   title="Finish"
-                  coordinate = {this.state.eventData.destination}
+                  coordinate = {eventData.destination}
                   pinColor = {randomColor()}
               />
   
               <Polyline
-                  coordinates={this.state.routeTravelledCoordinates}
-                  strokeColor={this.state.travelledRouteColor} // fallback for when `strokeColors` is not supported by the map-provider
+                  coordinates={routeTravelledCoordinates}
+                  strokeColor={travelledRouteColor} // fallback for when `strokeColors` is not supported by the map-provider
                   strokeWidth={6}
               />
               {
-                  this.displayOtherPlayer()
+                  displayOtherPlayer()
               }
   
           </Fragment>
@@ -316,13 +365,13 @@ class Track extends React.Component{
       </MapView>
         <View style={styles.statsContainer}>
         <Text style={styles.stats}>
-            Position : {parseInt(this.state.currentPosition)}
+            Position : {parseInt(currentPosition)}
           </Text>
           <Text style={styles.stats}>
-            Distance : {parseFloat(this.state.totalDistanceTravelled).toFixed(2)} km
+            Distance : {parseFloat(totalDistanceTravelled).toFixed(2)} km
           </Text>
           <Text style={styles.stats}>
-            Speed : {parseFloat(this.state.currentSpeed).toFixed(2)} km/hr
+            Speed : {parseFloat(currentSpeed).toFixed(2)} km/hr
           </Text>
         </View>
       </View>
@@ -330,51 +379,32 @@ class Track extends React.Component{
 
     }
 
-    componentDidMount() {
+    const calcDistance = (newLatLng) => {
+        // console.log(prevLatLng, newLatLng);
 
-        this.getCurrentUser();
-        
-        this.populateEventDetail();
-
-        this.getAllDistances();
-
-        this.getCurrentLocation();
-        
-        this.watchPosition();
-
-        this.listenForUpdate();
-
-
-    }
-
-    calcDistance(newLatLng) {
-        const { prevLatLng } = this.state
-        console.log("Distance ", (haversine(prevLatLng, newLatLng) || 0));
+        // console.log("Distance ", (haversine(prevLatLng, newLatLng) || 0));
         return (haversine(prevLatLng, newLatLng) || 0)
       }
 
-    componentWillUnmount() {
-        navigator.geolocation.clearWatch(this.watchID);
-    }
-
-    getMapRegion = () => ({
-        latitude: this.state.latitude,
-        longitude: this.state.longitude,
+    const getMapRegion = () => {
+      return {
+        latitude: latitude,
+        longitude: longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
         
-    });
+    }};
 
-    create_finish_alert(){
+    const create_finish_alert = () => {
       console.log("Inside create finish alert");
       return (
-        this.state.eventData && 
+        eventData && finished && 
         <View style={styles.container}>
-          <Modal
+          {/* <Modal
             animationType="slide"
             transparent={true}
-            visible={this.state.showModal}
-          >
+            visible={showModal}
+          > */}
             
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
@@ -384,8 +414,7 @@ class Track extends React.Component{
               <TouchableHighlight
                 style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                 onPress={() => {
-                  this.setState({showModal: false});
-                  this.navigation.navigate('TrackMenu',{screen:'EventSummary', myid : this.state.myid, eventId: this.state.eventid});
+                  navigation.navigate('TrackMenu',{screen:'EventSummary', myid : stateRef.current.myid, eventId: eventid});
                 }}
               >
                 <Text style={styles.textStyle}>View My Statistics for the event</Text>
@@ -393,19 +422,17 @@ class Track extends React.Component{
             </View>
           </View>
 
-          
-        </Modal>
+{/*           
+        </Modal> */}
       </View>
       )
 
     }
+    return (
+        (!finished && render_event_map()) || 
+        (finished && create_finish_alert())
+    );
 
-    render() {
-        return (
-            (!this.state.finished && this.render_event_map()) || 
-            (this.state.finished && this.create_finish_alert())
-        );
-      }
 }
 
 const styles = StyleSheet.create({

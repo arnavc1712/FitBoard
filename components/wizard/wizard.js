@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {GetPaths} from '../../utils/getPaths'
 import GetLocation from 'react-native-get-location'
+import messaging from '@react-native-firebase/messaging';
 
 const defaultScrollViewProps = {
     keyboardShouldPersistTaps: 'handled',
@@ -107,6 +108,11 @@ const Wizard = ({navigation,route}) => {
                     participatingEvents = [newEvent.id]
                 }
                 await userColl.doc(user["email"]).update({participatingEvents:participatingEvents})
+                
+                //subscribe to this event
+                messaging()
+                .subscribeToTopic(`${newEvent.id}`)
+                .then(() => console.log(`Subscribed to topic! ${newEvent.id}`));
 
                 Toast.show({text:"Successfully Created Event",buttonText:"Okay",duration:3000})
                 navigation.navigate('MenuStack',{screen:'Menu'})

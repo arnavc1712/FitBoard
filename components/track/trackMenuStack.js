@@ -1,20 +1,19 @@
 import React, {Component,useEffect,useState} from 'react';
 import {View,StyleSheet,Image} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import ProfileScreen from "./landing"
-import Wizard from './wizard/wizard'
-import ShowEvents from './registerEvents/showEvents'
+import EventSummary from './Event';
+import Track from './Track';
 const Stack = createStackNavigator();
 
-const MenuStack = ({navigation,route}) => {
-   console.log("Inside menu stack ", route.params);
+
+const TrackMenu = ({navigation,route}) => {
+
+   console.log("Inside track stack ", route.params);
     return (
-       <Stack.Navigator>
-           <Stack.Screen name="Menu" component={ProfileScreen} options={{header: () => null}}/>
-           <Stack.Screen name="Wizard" component={Wizard}/>
-           <Stack.Screen name="ShowEvents" component={ShowEvents}/>
+       <Stack.Navigator initialRouteName="Track">
+           <Stack.Screen name="Track" component={Track} initialParams = {route.params}/>
+           <Stack.Screen name="EventSummary" component={EventSummary} initialParams = {route.params}/>
        </Stack.Navigator>
-       
     )
 }
 
@@ -37,4 +36,4 @@ const styles = StyleSheet.create({
     },
     
 })
-export default MenuStack;
+export default TrackMenu;

@@ -11,6 +11,7 @@ import LogoutScreen from './logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
+import TrackMenu from './track/trackMenuStack';
 import ProfileScreen from './landing';
 import messaging from '@react-native-firebase/messaging'
 
@@ -70,8 +71,8 @@ const Home = ({navigation,route}) => {
 	          inactiveTintColor: 'gray',
 	        }}
 			>
-						<Tab.Screen name="MenuStack" component={MenuStack}/>
-		        <Tab.Screen name="Maps" component={viewMaps} />
+				<Tab.Screen name="MenuStack" component={MenuStack}/>
+		        <Tab.Screen name="TrackMenu" component={TrackMenu} />
 		        <Tab.Screen name="Logout" component={LogoutScreen} 
 		        			listeners={{ tabPress: e => {
 		        							console.log(e)

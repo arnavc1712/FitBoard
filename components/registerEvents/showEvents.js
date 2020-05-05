@@ -9,6 +9,7 @@ import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from
 import MapViewDirections from 'react-native-maps-directions';
 import { ConfirmDialog } from 'react-native-simple-dialogs';
 import moment from 'moment';
+import messaging from '@react-native-firebase/messaging';
 import Swiper from 'react-native-deck-swiper'
 
 const mapStyle = [
@@ -29,9 +30,6 @@ const mapStyle = [
 const placePhoto = (photoReference) => {
     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${configs["mapsDirectionsKey"]}`
 }
-
-
-
 const ShowEvents = ({navigation,route}) => {
     // const topic = route.params.topic
     const [events,setEvents] = useState([])
@@ -122,6 +120,11 @@ const ShowEvents = ({navigation,route}) => {
                 userColl.doc(user["email"]).update({participatingEvents:firestore.FieldValue.arrayUnion(eventId)})
                 eventColl.doc(eventId).update({registeredUsers:firestore.FieldValue.arrayUnion(user["email"])})
             }
+            
+            messaging()
+            .subscribeToTopic(`${eventId}`)
+            .then(() => console.log(`Subscribed to topic! ${eventId}`));
+            
             // await eventColl.doc(eventId).update({registeredUsers:registeredUsers})
             setRegisterDialogVisible(false)
             Toast.show({text:"Successfully Registered",buttonText:"Okay",duration:3000})

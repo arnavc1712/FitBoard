@@ -79,7 +79,7 @@ const  Track = ({route, navigation}) =>{
   var watchId = null;
 
   stateRef.current = {
-    eventData: eventData,
+                      eventData: eventData,
                       speed:speed,
                       currentSpeed:currentSpeed,
                       totalDistanceTravelled:totalDistanceTravelled,
@@ -94,15 +94,12 @@ const  Track = ({route, navigation}) =>{
                     }
 
 
-      // useEffect(()=>{
-      //   // console.log("########### SPEEED #########")
-      //   // console.log(speed)
-      // },[speed])
+     
 
       useEffect(()=>{
           // setEventId(route.params.eventId)
           // savedCallback.settingSpeed = settingSpeed
-          console.log(`Event Id is ${eventid}`)
+          // console.log(`Event Id is ${eventid}`)
           if(eventid){
             getCurrentUser();
             populateEventDetail();
@@ -115,6 +112,19 @@ const  Track = ({route, navigation}) =>{
             }
           }
     },[eventid]);
+
+    useEffect(() => {
+      try{
+        if(finished==true){
+          firestore().collection("Events").doc(eventid).set({
+                                                            rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition})
+                                                              },{merge:true})
+        }
+      }
+      catch(err){
+        console.log(err)
+      }
+    },[finished])
 
 
     const update_firebase_location = (newCoordinate) => {
@@ -129,7 +139,7 @@ const  Track = ({route, navigation}) =>{
             res['distance'] = stateRef.current.distanceTravelled;
             res['total_distance'] = stateRef.current.totalDistanceTravelled;
             res['speed'] = stateRef.current.speed;
-            console.log("Inside update_firebase_location", res);
+            // console.log("Inside update_firebase_location", res);
             firestore().collection(collection_name).doc(doc_name).set(res);
         }
         else{
@@ -187,12 +197,10 @@ const  Track = ({route, navigation}) =>{
 
     const checkIfFinished = (newCoord) => {
       if(!stateRef.current.eventData) return
-      console.log("Inside checkIfFinished");
+
       let finish = stateRef.current.eventData.destination;
       let lat_diff = Math.abs(finish.latitude - newCoord.latitude);
       let lng_diff = Math.abs(finish.longitude - newCoord.longitude);
-      console.log("Finish ", finish, stateRef.current.latitude, stateRef.current.longitude);
-      console.log("Diff ", lat_diff, lng_diff);
       if(lng_diff <= FINISH_LONGITUDE_DELTA && lat_diff <= FINISH_LONGITUDE_DELTA){
         setFinished(true);
       }

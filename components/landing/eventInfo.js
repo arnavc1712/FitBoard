@@ -25,7 +25,7 @@ const EventScreen = ({event,onUnregister}) => {
     return (
         <Grid>
             <Row size={1}>
-                <Image source={{uri:placePhoto(event._data.photoReference)}} style={styles.image}/>
+                <Image source={{uri:placePhoto(event.photoReference)}} style={styles.image}/>
             </Row>
             <Row size={1} style={{alignItems:'center'}}>
                  <List style={{width:'100%'}}>
@@ -36,7 +36,7 @@ const EventScreen = ({event,onUnregister}) => {
                                 </Button>
                             </Left>
                         
-                            <Body><Text>{event._data.type} ({event._data.distance})</Text></Body>
+                            <Body><Text>{event.type} ({event.distance})</Text></Body>
 
                     </ListItem>
                     <ListItem icon noBorder>
@@ -46,7 +46,7 @@ const EventScreen = ({event,onUnregister}) => {
                                 </Button>
                             </Left>
                         
-                            <Body><Text style={{fontSize:14}}>{event._data.locationName}</Text></Body>
+                            <Body><Text style={{fontSize:14}}>{event.locationName}</Text></Body>
 
                     </ListItem>
                     <ListItem icon noBorder>
@@ -56,7 +56,7 @@ const EventScreen = ({event,onUnregister}) => {
                             </Button>
                         </Left>
                       
-                        <Body><Text>{moment(event._data.timestamp).format("Do MMM YYYY")}</Text></Body>
+                        <Body><Text>{moment(event.timestamp).format("Do MMM YYYY")}</Text></Body>
 
                     </ListItem>
                     <ListItem icon noBorder>
@@ -66,7 +66,7 @@ const EventScreen = ({event,onUnregister}) => {
                             </Button>
                         </Left>
                       
-                        <Body><Text>{moment(event._data.timestamp).format("hh:mm a ([MST])")}</Text></Body>
+                        <Body><Text>{moment(event.timestamp).format("hh:mm a ([MST])")}</Text></Body>
 
                     </ListItem>
                 </List>
@@ -77,8 +77,8 @@ const EventScreen = ({event,onUnregister}) => {
                         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                         style={styles.map}
                         initialRegion={{
-                            latitude: event._data.source.latitude,
-                            longitude: event._data.source.longitude,
+                            latitude: event.source.latitude,
+                            longitude: event.source.longitude,
                             latitudeDelta: 0.2,
                             longitudeDelta: 0.2,
                             }}
@@ -88,21 +88,21 @@ const EventScreen = ({event,onUnregister}) => {
                         <Marker
                             style={{zIndex:1}}
                             // flat={true}
-                            coordinate={event._data.source}
+                            coordinate={event.source}
                         /> 
 
                    
                         <MapViewDirections
-                                origin={event._data.source}
-                                destination={event._data.destination}
+                                origin={event.source}
+                                destination={event.destination}
                                 apikey={configs["mapsDirectionsKey"]}
-                                waypoints={event._data.waypoints}
+                                waypoints={event.waypoints}
                                 strokeWidth={6}
                                 strokeColor="hotpink"
                             />
                     
                         <Marker 
-                            coordinate={event._data.destination}
+                            coordinate={event.destination}
                         
                             pinColor="#00B8D4"
                         />

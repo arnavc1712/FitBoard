@@ -12,65 +12,51 @@ const RegisteredEvents = ({user, navigation}) => {
     const [currEvent,setCurrEvent] = useState({})
     const [eventList,setEventList] = useState([])
     const [showModal,setShowModal] = useState(false)
+    const [participatingEvents,setParticipatingEvents] = useState([])
 
-
-    const getUserEvents = async () => {
-        try{
-            const userData = await userColl.doc(user["email"]).get()
-            // console.log(userData)
-            return userData._data.participatingEvents
-        }
-        catch(error){
-            console.log(error)
-            return []
-        }
-        
-    }
 
    
-    const getEvents = async () => {
-        try{
-            const participatingEvents = await getUserEvents()
-            let eventsData = await eventColl.get()
-            eventsData = eventsData.docs
-            // console.log(participatingEvents.includes(eventsData[0].id))
-            eventsData = eventsData.filter(event=>participatingEvents.includes(event.id))
-           
-            
-            setEventList(eventsData)
-            // const eventsData = await eventColl.getAll(participatingEvents)
-            
-        }
-        catch(error){
-            console.log(error)
-            
-        }
-            
-    }
 
 
     useEffect(()=>{
-        
-        if(user){
-            // setUser(user)
-            const subscriber = firestore()
-                           .collection('Users')
-                            .doc(user["email"])
-                            .onSnapshot(documentSnapshot => {
-                                setUserData(documentSnapshot.data())
-                                const participatingEvents= documentSnapshot.data().participatingEvents
-                                eventColl.get().then((data)=>{
-                                    let eventsData = data.docs
-                                    eventsData =  eventsData.filter(event=>participatingEvents.includes(event.id))
-                                    setEventList(eventsData)
-                                }) 
-                                
-                            });
-            return subscriber;
-            }
+        try{
+            if(user){
+                // setUser(user)
+                const subscriber = firestore()
+                            .collection('Users')
+                                .doc(user["email"])
+                                .onSnapshot(documentSnapshot => {
+                                    setUserData(documentSnapshot.data())
+                                    setParticipatingEvents(documentSnapshot.data().participatingEvents)
+                                    
+                                });
+                return subscriber;
+                }
+        }
+        catch(err){
+            console.log(err)
+        }
         
 
     },[user])
+
+
+    useEffect(()=>{
+        if (participatingEvents && participatingEvents.length>0){
+            const eventSubscriber = firestore().collection("Events")
+                                                .where("topic","in",userData.topics)
+                                                .onSnapshot(querySnapshot=>{
+                                                    let eventsData= []
+                                                    querySnapshot.forEach(doc=>{
+                                                        if(participatingEvents.includes(doc.id)){
+                                                            eventsData.push(doc.data())
+                                                        }
+                                                    })
+                                                    setEventList(eventsData)
+                                                })
+        }
+        
+    },[participatingEvents])
 
   
 
@@ -116,14 +102,14 @@ const RegisteredEvents = ({user, navigation}) => {
                 {eventList.map(event => 
                 <ListItem>
                     <Left>
-                        <Text>{event._data.type} ({event._data.distance})</Text>
+                        <Text>{event.type} ({event.distance})</Text>
                     </Left>
                     <Right style={{flex:1}}>
     
-                    { !event._data.started &&
+                    { !event.started &&
                     <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
                     }
-                    {event._data.started &&
+                    {event.started &&
                     <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>Participate</Text></Button>
                     }
                     </Right>

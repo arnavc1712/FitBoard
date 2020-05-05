@@ -33,11 +33,16 @@ import auth from '@react-native-firebase/auth';
 import { abs } from "react-native-reanimated";
 import configs from '../../conf.json'
 import MapViewDirections from 'react-native-maps-directions';
+import { radialArea } from "d3-shape";
 const randomColor = require('randomcolor'); // import the script
 
 
 const LATITUDE_DELTA = 0.0009;
 const LONGITUDE_DELTA = 0.0009;
+const START_LATITUDE_DELTA = 0.00004;
+const START_LONGITUDE_DELTA = 0.00004;
+const FINISH_LONGITUDE_DELTA = 0.00009;
+const FINISH_LATITUDE_DELTA = 0.00009;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
 const EVENT_ID = 'HZPr73HED35xypBWZOQY';
@@ -47,7 +52,7 @@ const eventColl = firestore().collection('Events')
 const  Track = ({route, navigation}) =>{
   // console.log(route.params)
   const eventid = route.params.eventId;
-  
+  let prevLatLng = {}
   // const savedCallback = useRef();
   const stateRef = useRef({});
   const [latitude, setLatitude] = useState(LATITUDE);
@@ -58,8 +63,7 @@ const  Track = ({route, navigation}) =>{
   const [distanceTravelled, setDistanceTravelled] = useState([]);
   const [totalDistanceTravelled, setTotalDistanceTravelled] = useState(0);
   const [routeColor, setRouteColor] = useState('#000');
-  // const [prevLatLng, setPrevLatLng] = useState({});
-  let prevLatLng = {}
+  const [atStartLocation, setatStartLocation] = useState(false);
   const [myid, setmyid] = useState(null);
   const [otherPlayersLocation, setOtherPlayerLocation] = useState({});
   const [eventData, setEventData] = useState(null);
@@ -75,6 +79,7 @@ const  Track = ({route, navigation}) =>{
   var watchId = null;
 
   stateRef.current = {
+    eventData: eventData,
                       speed:speed,
                       currentSpeed:currentSpeed,
                       totalDistanceTravelled:totalDistanceTravelled,
@@ -83,7 +88,9 @@ const  Track = ({route, navigation}) =>{
                       distanceTravelled:distanceTravelled,
                       routeTravelledCoordinates:routeTravelledCoordinates,
                       myid: myid,
-                      currentPosition: currentPosition
+                      currentPosition: currentPosition,
+                      atStartLocation: atStartLocation,
+                      finished: finished
                     }
 
 
@@ -98,18 +105,17 @@ const  Track = ({route, navigation}) =>{
           console.log(`Event Id is ${eventid}`)
           if(eventid){
             getCurrentUser();
-          
             populateEventDetail();
-    
-            getAllDistances();
-    
             getCurrentLocation();
-            
+            checkIfAtStarted();
             watchPosition();
-    
-            listenForUpdate();
+            if(stateRef.current.atStartLocation == true){
+              getAllDistances();
+              listenForUpdate();
+            }
           }
     },[eventid]);
+
 
     const update_firebase_location = (newCoordinate) => {
         
@@ -180,12 +186,28 @@ const  Track = ({route, navigation}) =>{
     }
 
     const checkIfFinished = (newCoord) => {
-      if(!eventData) return
-      let finish = eventData.destination;
-      let lat_diff = abs(finish.latitude - newCoord.latitude);
-      let lng_diff = abs(finish.longitude - newCoord.longitude);
-      if(lng_diff <= LATITUDE_DELTA && lat_diff <= LONGITUDE_DELTA){
+      if(!stateRef.current.eventData) return
+      console.log("Inside checkIfFinished");
+      let finish = stateRef.current.eventData.destination;
+      let lat_diff = Math.abs(finish.latitude - newCoord.latitude);
+      let lng_diff = Math.abs(finish.longitude - newCoord.longitude);
+      console.log("Finish ", finish, stateRef.current.latitude, stateRef.current.longitude);
+      console.log("Diff ", lat_diff, lng_diff);
+      if(lng_diff <= FINISH_LONGITUDE_DELTA && lat_diff <= FINISH_LONGITUDE_DELTA){
         setFinished(true);
+      }
+    }
+
+
+    const checkIfAtStarted = () => {
+      if(!stateRef.current.eventData) return
+      let source = stateRef.current.eventData.source;
+      let lat_diff = Math.abs(source.latitude - stateRef.current.latitude);
+      let lng_diff = Math.abs(source.longitude - stateRef.current.longitude);
+      console.log("Started ", source, stateRef.current.latitude, stateRef.current.longitude);
+      console.log("Diff ", lat_diff, lng_diff);
+      if(lng_diff <= START_LATITUDE_DELTA && lat_diff <= START_LONGITUDE_DELTA){
+        setatStartLocation(true);
       }
     }
 
@@ -205,20 +227,15 @@ const  Track = ({route, navigation}) =>{
                   latitude: position.coords.latitude,
                   longitude: position.coords.longitude
                 };
-              
-                // //update and move the marker
-                // if (Platform.OS === "android") {
-                //     if (this && this.marker) {
-                //       this.marker.animateMarkerToCoordinate(
-                //         newCoordinate,
-                //         500
-                //       );
-                //     }
-                //   } else {
-                //     coordinate.timing(newCoordinate).start();
-                // }
-                // console.log("Speed")
-                // console.log(speed)
+
+                setLatitude(position.coords.latitude);
+                setLongitude(position.coords.longitude);
+                if(stateRef.current.atStartLocation != true){
+                  checkIfAtStarted();
+                  return;
+                }
+                  
+
                 let _speed = stateRef.current.speed.concat([speed_val]);
                 
                 let _distanceTravelled = stateRef.current.distanceTravelled.concat([calcDistance(newLatLngs)]);
@@ -228,8 +245,7 @@ const  Track = ({route, navigation}) =>{
                 
                 setCurrentSpeed(speed_val);
         
-                setLatitude(position.coords.latitude);
-                setLongitude(position.coords.longitude);
+
                 setDistanceTravelled(_distanceTravelled);
                 setTotalDistanceTravelled(_total_distance);
                 setRouteTravelledCoordinates(_routeTravelledCoordinates);
@@ -242,8 +258,6 @@ const  Track = ({route, navigation}) =>{
                 update_firebase_location(newCoordinate);
                 getAllDistances();
                 checkIfFinished(newCoordinate);
-                
-
 
             },
             error => console.log(error),
@@ -300,10 +314,6 @@ const  Track = ({route, navigation}) =>{
     }
 
     const render_event_map = () => {
-      if(eventData){
-        console.log("First waypoint , Source, Destination, currentLocation");
-        console.log(eventData.waypoints[0], eventData.source, eventData.destination);
-      }
       return(
         <View style={styles.container}>
         <MapView
@@ -315,11 +325,11 @@ const  Track = ({route, navigation}) =>{
           zoomEnabled={true}
         >
           {
-          eventData && 
+          stateRef.current.eventData && 
           <Fragment>
               <Marker 
                   title="Start"
-                  coordinate = {eventData.source}
+                  coordinate = {stateRef.current.eventData.source}
                   pinColor = {randomColor()}
               />
   
@@ -328,23 +338,29 @@ const  Track = ({route, navigation}) =>{
                   coordinate = {{'latitude':latitude, 'longitude':longitude}}
                   pinColor = {randomColor()}
               />
+              {/* {stateRef.current.atStartLocation && */}
               <MapViewDirections
-                origin={eventData.source}
-                destination={eventData.destination}
+                origin={stateRef.current.eventData.source}
+                destination={stateRef.current.eventData.destination}
                 apikey={configs["mapsDirectionsKey"]}
-                waypoints={eventData.waypoints}
+                waypoints={stateRef.current.eventData.waypoints}
                 strokeWidth={6}
                 strokeColor={routeColor}
             />
-
-              {/* <Polyline
-                  coordinates={eventData.waypoints}
-                  strokeColor={routeColor} // fallback for when `strokeColors` is not supported by the map-provider
-                  strokeWidth={6}
-              /> */}
+              {/* } */}
+            {/* {!stateRef.current.atStartLocation &&
+              <MapViewDirections
+                origin={{'latitude':latitude, 'longitude':longitude}}
+                destination={stateRef.current.eventData.source}
+                apikey={configs["mapsDirectionsKey"]}
+                
+                strokeWidth={6}
+                strokeColor={routeColor}
+            />
+              } */}
               <Marker 
                   title="Finish"
-                  coordinate = {eventData.destination}
+                  coordinate = {stateRef.current.eventData.destination}
                   pinColor = {randomColor()}
               />
   
@@ -365,7 +381,7 @@ const  Track = ({route, navigation}) =>{
       </MapView>
         <View style={styles.statsContainer}>
         <Text style={styles.stats}>
-            Position : {parseInt(currentPosition)}
+            Position : {parseInt(currentPosition) / (Object.keys(otherPlayersLocation) ? Object.keys(otherPlayersLocation).length+1 : 0)}
           </Text>
           <Text style={styles.stats}>
             Distance : {parseFloat(totalDistanceTravelled).toFixed(2)} km
@@ -374,6 +390,11 @@ const  Track = ({route, navigation}) =>{
             Speed : {parseFloat(currentSpeed).toFixed(2)} km/hr
           </Text>
         </View>
+        {!stateRef.current.atStartLocation && 
+        <View style={{width:300, textAlign:'center', padding:10}}>
+          <Text style={styles.notStarted}>Move to the start location !</Text>
+        </View>
+      }
       </View>
       )
 
@@ -398,7 +419,7 @@ const  Track = ({route, navigation}) =>{
     const create_finish_alert = () => {
       console.log("Inside create finish alert");
       return (
-        eventData && finished && 
+        stateRef.current.finished && 
         <View style={styles.container}>
           {/* <Modal
             animationType="slide"
@@ -429,8 +450,8 @@ const  Track = ({route, navigation}) =>{
 
     }
     return (
-        (!finished && render_event_map()) || 
-        (finished && create_finish_alert())
+        (!stateRef.current.finished && render_event_map()) || 
+        (stateRef.current.finished && create_finish_alert())
     );
 
 }
@@ -510,14 +531,25 @@ const styles = StyleSheet.create({
         right: 10,
         padding: 10,
         justifyContent: "flex-end",
-        backgroundColor: "lightblue",
+        backgroundColor: "#F83FFF",
+        borderRadius: 5,
+        borderWidth: 2,
+        borderColor: "black",
         // opacity: 0.3,
-        color: 'white'
+
     },
     stats: {
       marginVertical: 5,
       color: 'white',
       fontSize: 18,
+    },
+    notStarted:{
+      color: 'red',
+      fontSize: 20,
+      marginBottom:30,
+      marginLeft:10,
+      fontWeight:'bold',
+      textDecorationLine:'underline'
     }
   });
   

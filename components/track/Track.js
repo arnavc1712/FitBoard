@@ -69,7 +69,7 @@ const  Track = ({route, navigation}) =>{
   const [eventData, setEventData] = useState(null);
   const [travelledRouteColor, setTravelledRouteColor] = useState(randomColor());
   const [currentPosition, setCurrentPosition] = useState(0);
-  const [finished, setFinished] = useState(false); 
+  const [finished, setFinished] = useState(true); 
   const [coordinate, setCoordinate] = useState(new AnimatedRegion({
             latitude: LATITUDE,
             longitude: LONGITUDE,
@@ -106,6 +106,7 @@ const  Track = ({route, navigation}) =>{
             getCurrentLocation();
             checkIfAtStarted();
             watchPosition();
+            
             if(stateRef.current.atStartLocation == true){
               getAllDistances();
               listenForUpdate();
@@ -119,12 +120,18 @@ const  Track = ({route, navigation}) =>{
           firestore().collection("Events").doc(eventid).set({
                                                             rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition})
                                                               },{merge:true})
+          console.log("Setting the finished eventid");
+          firestore().collection('Users').doc(stateRef.current.myid).set({
+            finishedEvents: firestore.FieldValue.arrayUnion(eventid)
+          },{merge:true});
         }
       }
       catch(err){
         console.log(err)
       }
     },[finished])
+
+
 
 
     const update_firebase_location = (newCoordinate) => {
@@ -195,9 +202,9 @@ const  Track = ({route, navigation}) =>{
       );
     }
 
-    const checkIfFinished = (newCoord) => {
+    const checkIfFinished = () => {
       if(!stateRef.current.eventData) return
-
+      let newCoord = prevLatLng;
       let finish = stateRef.current.eventData.destination;
       let lat_diff = Math.abs(finish.latitude - newCoord.latitude);
       let lng_diff = Math.abs(finish.longitude - newCoord.longitude);
@@ -216,6 +223,9 @@ const  Track = ({route, navigation}) =>{
       console.log("Diff ", lat_diff, lng_diff);
       if(lng_diff <= START_LATITUDE_DELTA && lat_diff <= START_LONGITUDE_DELTA){
         setatStartLocation(true);
+
+
+
       }
     }
 
@@ -265,7 +275,7 @@ const  Track = ({route, navigation}) =>{
                 //do so only when the eventid and current location is set
                 update_firebase_location(newCoordinate);
                 getAllDistances();
-                checkIfFinished(newCoordinate);
+                checkIfFinished();
 
             },
             error => console.log(error),

@@ -15,6 +15,7 @@ import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
 import TrackMenu from './track/trackMenuStack';
+import PastEvents from './track/pastEvents';
 import ProfileScreen from './landing';
 import messaging from '@react-native-firebase/messaging'
 
@@ -66,6 +67,14 @@ const Home = ({navigation,route}) => {
             <MaterialCommunityIcons name="map" color={color} size={26} />
           ),
         }}/>
+
+		<Tab.Screen name="Past Events" component={PastEvents} options={{
+          tabBarLabel: 'Past Events',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="history" color={color} size={26} />
+          ),
+        }}/>
+
 						<Tab.Screen name="Logout" component={LogoutScreen} 
 					
 		        			listeners={{ tabPress: e => {

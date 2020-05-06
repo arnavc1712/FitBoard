@@ -39,8 +39,8 @@ const randomColor = require('randomcolor'); // import the script
 
 const LATITUDE_DELTA = 0.0009;
 const LONGITUDE_DELTA = 0.0009;
-const START_LATITUDE_DELTA = 0.00004;
-const START_LONGITUDE_DELTA = 0.00004;
+const START_LATITUDE_DELTA = 0.00009;
+const START_LONGITUDE_DELTA = 0.00009;
 const FINISH_LONGITUDE_DELTA = 0.00009;
 const FINISH_LATITUDE_DELTA = 0.00009;
 const LATITUDE = 37.78825;
@@ -69,7 +69,7 @@ const  Track = ({route, navigation}) =>{
   const [eventData, setEventData] = useState(null);
   const [travelledRouteColor, setTravelledRouteColor] = useState(randomColor());
   const [currentPosition, setCurrentPosition] = useState(0);
-  const [finished, setFinished] = useState(true); 
+  const [finished, setFinished] = useState(false); 
   const [coordinate, setCoordinate] = useState(new AnimatedRegion({
             latitude: LATITUDE,
             longitude: LONGITUDE,

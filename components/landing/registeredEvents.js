@@ -80,7 +80,7 @@ const RegisteredEvents = ({user, navigation}) => {
 
     const onStart = (event) => {
         console.log("Event start clicked ", event);
-        navigation.navigate('TrackMenu',{screen:'Track', params:{eventId: event.id}});
+        navigation.navigate('MenuStack',{screen:'Track', params:{eventId: event.id}});
         
     }
 

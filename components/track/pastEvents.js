@@ -93,7 +93,7 @@ const PastEvents = ({user, navigation}) => {
 
     const onStart = (event) => {
         console.log("Event start clicked ", event);
-        navigation.navigate('TrackMenu',{screen:'EventSummary',params:{                                                              
+        navigation.navigate('Events',{screen:'EventSummary',params:{                                                              
             myid : myid, 
             eventId: event.id
           }

@@ -10,9 +10,7 @@ import {List,ListItem,Left,Right,Text,Icon,Button,Toast,Body} from 'native-base'
 import configs from '../../conf.json'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import moment from 'moment';
-import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from 'react-native-maps';
 
-import MapViewDirections from 'react-native-maps-directions';
 
 const placePhoto = (photoReference) => {
     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${configs["mapsDirectionsKey"]}`
@@ -21,7 +19,6 @@ const placePhoto = (photoReference) => {
 const EventScreen = ({event,onUnregister}) => {
 
     
-
     return (
         <Grid>
             <Row size={1}>

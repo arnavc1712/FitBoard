@@ -18,7 +18,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 
 
-import LoginScreen from './components/login'
+import LoginScreen from './components/authentication/login'
+import SignupScreen from './components/authentication/signup'
 import HomeNavScreen from './components/home'
 
 
@@ -57,8 +58,8 @@ const App = () => {
     else{
       renderedComponent = <React.Fragment>
                               <Stack.Screen name="Login" component={LoginScreen} options={{headerStyle:{backgroundColor:'#00695C'},headerTintColor:'white'}}/>
-                              
-                            </React.Fragment>
+                              <Stack.Screen name="Signup" component={SignupScreen} options={{headerStyle:{backgroundColor:'#00695C'},headerTintColor:'white'}}/>
+                          </React.Fragment>
     }
 
     return (

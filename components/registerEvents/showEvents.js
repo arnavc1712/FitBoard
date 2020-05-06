@@ -180,10 +180,7 @@ const ShowEvents = ({navigation,route}) => {
                                         
 
                                         <Right style={{flex:1}}>
-                                            {item._data.registeredUsers.includes(user["email"]) &&
-                                                <Button bordered rounded danger onPress={()=>{setUnregisterDialogVisible(true);setCurrEvent(item)}}><Text>Unregister</Text></Button>}
-                                            {!item._data.registeredUsers.includes(user["email"]) &&
-                                                <Button bordered rounded onPress={()=>{setRegisterDialogVisible(true);setCurrEvent(item)}}><Text>Register</Text></Button>}
+                                            <Button bordered rounded onPress={()=>{setRegisterDialogVisible(true);setCurrEvent(item)}}><Text>Register</Text></Button>
                                             
                                         </Right>
                                 </CardItem>

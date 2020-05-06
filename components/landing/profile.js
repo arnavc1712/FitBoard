@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component,useState ,useEffect} from 'react'
 import {
   Animated,
   Image,
@@ -10,8 +10,14 @@ import {
 } from 'react-native'
 import { Icon } from 'react-native-elements'
 
-const Profile = () => {
-
+const Profile = ({userData}) => {
+    const [userName,setUserName] = useState('')
+    useEffect(()=>{
+      if (userData){
+        setUserName(userData.name)
+      }
+    },[userData])
+    
     return (
         <View style={styles.headerContainer}>
           <View style={styles.userRow}>
@@ -22,7 +28,7 @@ const Profile = () => {
               }}
             />
             <View style={styles.userNameRow}>
-              <Text style={styles.userNameText}>Arnav Chakravarthy</Text>
+              <Text style={styles.userNameText}>{userName}</Text>
             </View>
             <View style={styles.userBioRow}>
               <Text style={styles.userBioText}>Something</Text>
@@ -74,6 +80,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#FFF',
       marginBottom: 10,
       marginTop: 45,
+      flex:1
     },
     indicatorTab: {
       backgroundColor: 'transparent',
@@ -123,9 +130,11 @@ const styles = StyleSheet.create({
       height: 120,
       marginBottom: 10,
       width: 120,
+      alignSelf:'center'
     },
     userNameRow: {
       marginBottom: 10,
+      flex:1
     },
     userNameText: {
       color: '#5B5A5A',
@@ -134,10 +143,11 @@ const styles = StyleSheet.create({
       textAlign: 'center',
     },
     userRow: {
-      alignItems: 'center',
-      flexDirection: 'column',
-      justifyContent: 'center',
+      // alignItems: 'center',
+      // flexDirection: 'column',
+      // justifyContent: 'center',
       marginBottom: 12,
+      flex:1
     },
   })
 

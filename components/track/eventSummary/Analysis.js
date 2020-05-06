@@ -8,8 +8,8 @@ import { Container, Card, CardItem, Thumbnail, Icon, Left, Right } from 'native-
 import { Image } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { Dimensions } from 'react-native';
-import configs from "../../conf.json"
-import {getDistance} from './getDistanceOfUsers';
+import configs from "../../../conf.json"
+import {getDistance} from '../getDistanceOfUsers';
 
 import {
     LineChart,
@@ -77,8 +77,9 @@ const linedata = (data) => {
     />
   }
   
-const EventSummary = ({ route, navigation }) => {
+const Analysis= ({ route, navigation }) => {
     // console.log("inside event summary", route.params);
+    console.log(route.params)
     const { myid, eventId } = route.params;
     const [eventData,setEventData] = useState(null)
     const [speed,setEventSpeed] = useState(null);
@@ -139,8 +140,6 @@ const EventSummary = ({ route, navigation }) => {
     return(
 
         <Container>
-        <Header />
-        <Content>
             {eventData && speed && distance &&
           <Card>
             <CardItem>
@@ -173,10 +172,6 @@ const EventSummary = ({ route, navigation }) => {
             </CardItem>
           </Card>
           }
-        </Content>
-            
-
-
 
       </Container>
     );
@@ -220,4 +215,4 @@ const styles = StyleSheet.create({
       textAlign: "center"
     }
   });
-export default EventSummary;
+export default Analysis;

@@ -16,6 +16,7 @@ const ProfileScreen = ({navigation}) => {
     const [currLocation,setCurrLocation] = useState({latitude:null,longitude:null})
     const [topic,setTopic] = useState(null)
     const [user,setUser] = useState(null)
+    const [userData,setUserData] = useState(null)
     const [showModal,setShowModal] = useState(false)
     let state = ''
     let zipCode = ''
@@ -26,6 +27,8 @@ const ProfileScreen = ({navigation}) => {
     const onAuthChanged = async(user) => {
         try{
             setUser(user)
+            let uData = await userColl.doc(user["email"]).get()
+            setUserData(uData.data())
             const location = await GetLocation.getCurrentPosition({enableHighAccuracy: true,timeout: 15000,});
             let coordObj = {latitude:location["latitude"],longitude:location["longitude"]}
             // console.log(`https://maps.googleapis.com/maps/api/geocode/json?address=${coordObj.latitude},${coordObj.longitude}&key=${configs.mapsDirectionsKey}`)
@@ -80,7 +83,7 @@ const ProfileScreen = ({navigation}) => {
     return(
         <ScrollView style={styles.scroll}>
             <View>
-                <Profile/>
+                <Profile userData={userData}/>
                 <View style={{alignItems:'center',justifyContent:'center',flexDirection:'row'}}>
                 <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'Wizard',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Create Event </Text></Button>
                     <Button full rounded style={styles.button} onPress={() => navigation.navigate('MenuStack',{screen:'ShowEvents',params:{currLocation:currLocation}})}><Text style={{fontSize:12}}> Register for Event </Text></Button>

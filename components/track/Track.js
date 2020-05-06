@@ -443,7 +443,13 @@ const  Track = ({route, navigation}) =>{
               <TouchableHighlight
                 style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                 onPress={() => {
-                  navigation.navigate('TrackMenu',{screen:'EventSummary', myid : stateRef.current.myid, eventId: eventid});
+                  navigation.navigate('TrackMenu',{screen:'EventSummary',params:{
+                                                                                
+                                                                                  myid : stateRef.current.myid, 
+                                                                                  eventId: eventid
+                                                                                }
+                                                                                
+                                                                              });
                 }}
               >
                 <Text style={styles.textStyle}>View My Statistics for the event</Text>

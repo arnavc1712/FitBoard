@@ -6,42 +6,25 @@ import {
 } from 'react-native';
 
 import Constants from 'expo-constants';
-import VerifyEmailContent from './verifyEmailModalContent';
+import VerifyEmailContent from '../verifyEmailModalContent';
 import Modal from "react-native-modal";
 
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-const LoginScreen = (props) => {
+const SignupScreen = (props) => {
 
     
 
     const navigation = props.navigation
     const [email,setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [name,setName] = useState('')
     const [user,setUser] = useState()
     const [showModal,setShowModal] = useState(false)
     const userColl = firestore().collection('Users')
 
 
-    const onLogin = async (val) => {
-        try{
-            const currentUser = await auth().signInWithEmailAndPassword(email.trim(),password)
-            setUser(currentUser)
-            console.log(currentUser)
-            if(!currentUser.user.emailVerified){
-                setShowModal(true)
-            }
-            else{
-                navigation.navigate('Home')
-            }
-        }
-        catch(error){
-            console.log(error)
-            Toast.show({text:error.toString().split("Error:")[1].trim(),buttonText:"Okay",duration:3000})
-        }
-
-    }
 
     const onSignup = async () => {
         try {
@@ -49,12 +32,15 @@ const LoginScreen = (props) => {
             
             setUser(currentUser)
             if (currentUser && currentUser["additionalUserInfo"]["isNewUser"]){
-                await userColl.doc(currentUser["user"]["email"]).set({email:currentUser["user"]["email"],
+                await userColl.doc(currentUser["user"]["email"]).set({
+                                                                      name:name,
+                                                                      email:currentUser["user"]["email"],
                                                                       participatingEvents:[],
                                                                       lastUpdatedLocation:{}})
             }
             await auth().currentUser.sendEmailVerification()
             // console.log(user["user"]["email"])
+            navigation.navigate("Login")
             Toast.show({text:"A verfication email has been sent to "+currentUser["user"]["email"],buttonText:"Okay",duration:3000})
         }
         catch(error){
@@ -83,20 +69,12 @@ const LoginScreen = (props) => {
 
         <Container style={{ paddingTop: Constants.statusBarHeight }}>
             <Content padder contentContainerStyle={styles.form}>
-                <Modal
-                    testID={'modal'}
-                    isVisible={showModal}
-                    backdropColor="#B4B3DB"
-                    backdropOpacity={0.8}
-                    animationIn="zoomInDown"
-                    animationOut="zoomOutUp"
-                    animationInTiming={600}
-                    animationOutTiming={600}
-                    backdropTransitionInTiming={600}
-                    backdropTransitionOutTiming={600}>
-                    <VerifyEmailContent onPress={() => onVerifyEmail()}/>
-                </Modal>
+               
                 <Form>
+                    <FormItem floatingLabel style={styles.item}>
+                      <Label>Name</Label>
+                      <Input value={name} onChangeText={val => setName(val)}/>
+                    </FormItem>
                     <FormItem floatingLabel style={styles.item}>
                       <Label>Email ID</Label>
                       <Input value={email} onChangeText={val => setEmail(val)}/>
@@ -107,7 +85,6 @@ const LoginScreen = (props) => {
                     </FormItem>
 
                     <Button full rounded style={styles.button} onPress={()=>onSignup()} ><Text> Signup </Text></Button>
-                    <Button full rounded style={styles.button} onPress={()=>onLogin()} ><Text> Login </Text></Button>
                     
            
                 </Form>
@@ -140,4 +117,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default LoginScreen;
+export default SignupScreen;

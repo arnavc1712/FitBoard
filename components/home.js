@@ -5,9 +5,12 @@ import {
   StyleSheet 
 } from 'react-native';
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import LogoutScreen from './logout';
+import LogoutScreen from './authentication/logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
@@ -30,7 +33,7 @@ const logout = async () => {
 
 
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 const Home = ({navigation,route}) => {
 		// const [currLocation,setCurrLocation] = useState({latitude:null,longitude:null})
@@ -47,37 +50,35 @@ const Home = ({navigation,route}) => {
 		
 		return(
 			<Tab.Navigator
-			screenOptions={({ route }) => ({
-	          tabBarIcon: ({ focused, color, size }) => {
-	            let iconName;
-
-	            if (route.name === 'Home') {
-	              iconName = focused
-	                ? 'ios-information-circle'
-	                : 'ios-information-circle-outline';
-	            } else if (route.name === 'MenuStack') {
-	              iconName = focused ? 'ios-list-box' : 'ios-list';
-	            }
-	            else if (route.name == "Logout") {
-	            	iconName = 'logout'
-	            }
-
-	            // You can return any component that you like here!
-	            return <Ionicons name={iconName} size={size} color={color} />;
-	          },
-	        })}
-	        tabBarOptions={{
-	          activeTintColor: 'tomato',
-	          inactiveTintColor: 'gray',
-	        }}
+					activeColor='#ba68c8'
+					inactiveColor='gray'
+					barStyle={{ backgroundColor: 'white' }}
 			>
-				<Tab.Screen name="MenuStack" component={MenuStack}/>
-		        <Tab.Screen name="TrackMenu" component={TrackMenu} />
-		        <Tab.Screen name="Logout" component={LogoutScreen} 
+				<Tab.Screen name="MenuStack" component={MenuStack} options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" color={color} size={26} />
+          ),
+        }}/>
+		      <Tab.Screen name="TrackMenu" component={TrackMenu} options={{
+          tabBarLabel: 'Track',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="map" color={color} size={26} />
+          ),
+        }}/>
+						<Tab.Screen name="Logout" component={LogoutScreen} 
+					
 		        			listeners={{ tabPress: e => {
 		        							console.log(e)
 		        							logout()
-		        						} }}
+												} }}
+									options={{
+										tabBarLabel: 'Logout',
+										tabBarIcon: ({ color }) => (
+											<MaterialCommunityIcons name="logout" color={color} size={26} />
+										),
+									}}
+									
 		        />
 	      	</Tab.Navigator>
 		)

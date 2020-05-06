@@ -14,10 +14,6 @@ const RegisteredEvents = ({user, navigation}) => {
     const [showModal,setShowModal] = useState(false)
     const [participatingEvents,setParticipatingEvents] = useState([])
 
-
-   
-
-
     useEffect(()=>{
         try{
             if(user){
@@ -49,7 +45,7 @@ const RegisteredEvents = ({user, navigation}) => {
                                                     let eventsData= []
                                                     querySnapshot.forEach(doc=>{
                                                         if(participatingEvents.includes(doc.id)){
-                                                            eventsData.push(doc.data())
+                                                            eventsData.push({...doc.data(),id:doc.id})
                                                         }
                                                     })
                                                     setEventList(eventsData)
@@ -88,10 +84,7 @@ const RegisteredEvents = ({user, navigation}) => {
         
     }
 
-    // useEffect(()=>{
-    //     console.log(eventList)
-    // },[eventList])
-
+    
     return(
         <View>
             <List>

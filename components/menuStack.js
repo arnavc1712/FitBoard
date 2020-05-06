@@ -18,23 +18,4 @@ const MenuStack = ({navigation,route}) => {
     )
 }
 
-const styles = StyleSheet.create({
-    grid:{
-        alignItems:'center',
-    },
-    row2:{
-        // backgroundColor:'green'
-    },
-    button:{
-        width:'40%',
-        height:50,
-        alignSelf:'center',
-        margin:10,
-    },
-    form:{
-        flex:1,
-        justifyContent : 'center'
-    },
-    
-})
 export default MenuStack;

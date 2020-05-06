@@ -66,7 +66,7 @@ const EventScreen = ({event,onUnregister}) => {
                             </Button>
                         </Left>
                       
-                        <Body><Text>{moment(event.timestamp).format("hh:mm a ([MST])")}</Text></Body>
+                        <Body><Text>{moment(event.timestamp.toDate()).format("hh:mm a ([MST])")}</Text></Body>
 
                     </ListItem>
                 </List>

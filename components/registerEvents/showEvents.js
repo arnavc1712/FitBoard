@@ -86,7 +86,7 @@ const ShowEvents = ({navigation,route}) => {
                                                                                 return false
                                                                             }
                                                                         })
-                                                            
+                                    // eventsData.map(obj=>console.log(o)))  
                                     setEvents(eventsData)
                                     // console.log(eventsData)
                                 }) 
@@ -101,6 +101,9 @@ const ShowEvents = ({navigation,route}) => {
     const getNumDays = (date1,date2) => {
         let a = moment(date1)
         let b = moment(date2)
+        console.log(a)
+        console.log(b)
+        console.log(a.diff(b,'days'))
         return a.diff(b,'days')
     }
 
@@ -174,7 +177,7 @@ const ShowEvents = ({navigation,route}) => {
                                 <CardItem>
                                         <View style={{flexDirection:'column'}}>
                                             <Text style={{fontSize:12}}>{item._data.registeredUsers?item._data.registeredUsers.length:null} Participant(s)</Text>
-                                            {getNumDays(new Date(),item._data.createdAt) ? <Text style={{fontSize:12}}>Created {getNumDays(new Date(),item._data.createdAt)} days ago</Text>:<Text style={{fontSize:12}}>NEW</Text>}
+                                            {getNumDays(new Date(),item._data.createdAt.toDate()) ? <Text style={{fontSize:12}}>Created {getNumDays(new Date(),item._data.createdAt.toDate())} days ago</Text>:<Text style={{fontSize:12}}>NEW</Text>}
                                             
                                         </View>
                                         

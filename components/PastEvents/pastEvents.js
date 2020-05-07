@@ -118,9 +118,8 @@ const PastEvents = ({user, navigation}) => {
                     </Left>
                     <Right style={{flex:1}}>
     
-                    {event.started &&
                     <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>View</Text></Button>
-                    }
+                    
                     </Right>
                 </ListItem>
                 )}

@@ -30,26 +30,19 @@ import firestore from '@react-native-firebase/firestore';
 import {getDistance} from './getDistanceOfUsers';
 
 import auth from '@react-native-firebase/auth';
-import { abs } from "react-native-reanimated";
 import configs from '../../conf.json'
 import MapViewDirections from 'react-native-maps-directions';
-import { radialArea } from "d3-shape";
-import CountDown from 'react-native-countdown-component';
-//import CountDown to show the timer
-import moment from 'moment';
 const randomColor = require('randomcolor'); // import the script
 
 
 const LATITUDE_DELTA = 0.0009;
 const LONGITUDE_DELTA = 0.0009;
-const START_LATITUDE_DELTA = 0.009;
-const START_LONGITUDE_DELTA = 0.009;
+const START_LATITUDE_DELTA = 0.09;
+const START_LONGITUDE_DELTA = 0.09;
 const FINISH_LONGITUDE_DELTA = 0.00009;
 const FINISH_LATITUDE_DELTA = 0.00009;
 const LATITUDE = 37.78825;
 const LONGITUDE = -122.4324;
-const EVENT_ID = 'HZPr73HED35xypBWZOQY';
-const MY_ID = 'abhidagar1@gmail.com';
 const eventColl = firestore().collection('Events')
 
 const  Track = ({route, navigation}) =>{
@@ -73,7 +66,9 @@ const  Track = ({route, navigation}) =>{
   const [travelledRouteColor, setTravelledRouteColor] = useState(randomColor());
   const [currentPosition, setCurrentPosition] = useState(0);
   const [finished, setFinished] = useState(false); 
-  const [timer, setTimer] = useState("00 H:00 M:00 S");
+  const [timerSec, setTimerSec] = useState(0);
+  const [timerMin, setTimerMin] = useState(0);
+  const [timerHr, setTimerHr] = useState(0);
   const [coordinate, setCoordinate] = useState(new AnimatedRegion({
             latitude: LATITUDE,
             longitude: LONGITUDE,
@@ -81,7 +76,7 @@ const  Track = ({route, navigation}) =>{
             longitudeDelta: 0
           }));
   var watchId = null;
-
+  var timer = null
   stateRef.current = {
                       eventData: eventData,
                       speed:speed,
@@ -94,11 +89,19 @@ const  Track = ({route, navigation}) =>{
                       myid: myid,
                       currentPosition: currentPosition,
                       atStartLocation: atStartLocation,
-                      finished: finished
+                      finished: finished,
+                      timerSec: timerSec,
+                      timerMin: timerMin,
+                      timerHr: timerHr
                     }
 
 
-     
+     useEffect(() => {
+        if(stateRef.current.atStartLocation == true){
+          timer = setInterval(updateTimeValues, 1000);
+        }
+        return () => clearTimeout(timer);
+     }, [atStartLocation]);
 
       useEffect(()=>{
           // setEventId(route.params.eventId)
@@ -110,12 +113,10 @@ const  Track = ({route, navigation}) =>{
             getCurrentLocation();
             checkIfAtStarted();
             watchPosition();
-            
-            if(stateRef.current.atStartLocation == true){
-              getAllDistances();
-              listenForUpdate();
-            }
+            getAllDistances();
+            listenForUpdate();
           }
+            
     },[eventid]);
 
     useEffect(() => {
@@ -125,9 +126,6 @@ const  Track = ({route, navigation}) =>{
                                                             rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition})
                                                               },{merge:true})
           console.log("Setting the finished eventid");
-          // firestore().collection('Users').doc(stateRef.current.myid).set({
-          //   finishedEvents: firestore.FieldValue.arrayUnion(eventid)
-          // },{merge:true});
         }
       }
       catch(err){
@@ -229,8 +227,23 @@ const  Track = ({route, navigation}) =>{
         setatStartLocation(true);
 
 
-
       }
+    }
+    
+    const updateTimeValues = () => {
+      // console.log("Inside Update timer values");
+      // console.log(stateRef.current.timerSec, stateRef.current.timerMin, stateRef.current.timerHr);
+      if(stateRef.current.timerSec == 59){
+        setTimerSec(0);
+        if(stateRef.current.timerMin == 59){
+          setTimerMin(0);
+          setTimerHr(stateRef.current.timerHr + 1);
+        }
+        else
+          setTimerMin(stateRef.current.timerMin + 1);
+      }
+      else
+        setTimerSec(stateRef.current.timerSec+1);
     }
 
     const watchPosition = ()=>{
@@ -403,8 +416,8 @@ const  Track = ({route, navigation}) =>{
       {stateRef.current.atStartLocation &&
       <Fragment>
       <View style={styles.timerContainer}>
-        <Text style={styles.timer}>Timer</Text>
-        </View>
+        <Text style={styles.timer}>{stateRef.current.timerHr} Hrs : {stateRef.current.timerMin} Mins : {stateRef.current.timerSec} Sec</Text>
+      </View>
 
 
         <View style={styles.statsContainer}>
@@ -568,7 +581,7 @@ const styles = StyleSheet.create({
         right: 10,
         padding: 10,
         justifyContent: "flex-end",
-        backgroundColor: "#6AA5FF",
+        backgroundColor: "black",
         borderRadius: 5,
         borderWidth: 2,
         borderColor: "black",
@@ -579,14 +592,21 @@ const styles = StyleSheet.create({
       position:'absolute',
       top: 30,
       justifyContent: "center",
-      borderRadius: 5
-
-      // borderWidth: 2,
-      // borderColor: "black",      
+      borderRadius: 5,
+      backgroundColor: "black",
+      borderRadius: 5,
+      borderWidth: 2,
+      padding: 7,
+      borderColor: "grey",      
+    },
+    timerHeader:{
+      fontVariant: ['tabular-nums'],
+      fontSize:26
     },
     timer:{
       fontVariant: ['tabular-nums'],
-      fontSize:24
+      fontSize:24,
+      color: "white"
     },
     stats: {
       marginVertical: 5,

@@ -14,7 +14,7 @@ import LogoutScreen from './authentication/logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
-import Events from './track/trackMenuStack';
+import EventMenu from './PastEvents';
 
 import ProfileScreen from './landing';
 import messaging from '@react-native-firebase/messaging'
@@ -61,14 +61,8 @@ const Home = ({navigation,route}) => {
             <MaterialCommunityIcons name="view-dashboard" color={color} size={26} />
           ),
         }}/>
-		      {/* <Tab.Screen name="TrackMenu" component={TrackMenu} options={{
-          tabBarLabel: 'Track',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="map" color={color} size={26} />
-          ),
-        }}/> */}
 
-		<Tab.Screen name="Events" component={Events} options={{
+		<Tab.Screen name="EventMenu" component={EventMenu} options={{
           tabBarLabel: 'Events',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="history" color={color} size={26} />

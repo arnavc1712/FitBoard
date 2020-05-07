@@ -466,7 +466,7 @@ const  Track = ({route, navigation}) =>{
               <TouchableHighlight
                 style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                 onPress={() => {
-                  navigation.navigate('TrackMenu',{screen:'EventSummary',params:{
+                  navigation.navigate('EventMenu',{screen:'EventSummary',params:{
                                                                                 
                                                                                   myid : stateRef.current.myid, 
                                                                                   eventId: eventid

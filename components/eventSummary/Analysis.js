@@ -8,8 +8,8 @@ import { Container, Card, CardItem, Thumbnail, Icon, Left, Right } from 'native-
 import { Image } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { Dimensions } from 'react-native';
-import configs from "../../../conf.json"
-import {getDistance} from '../getDistanceOfUsers';
+import configs from "../../conf.json"
+import {getDistance} from '../track/getDistanceOfUsers';
 
 import {
     LineChart,

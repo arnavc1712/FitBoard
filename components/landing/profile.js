@@ -31,7 +31,7 @@ const Profile = ({userData}) => {
               <Text style={styles.userNameText}>{userName}</Text>
             </View>
             <View style={styles.userBioRow}>
-              <Text style={styles.userBioText}>Something</Text>
+              <Text style={styles.userBioText}>...</Text>
             </View>
           </View>
           <View style={styles.socialRow}>

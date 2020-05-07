@@ -17,9 +17,8 @@ const EventDetailPicker = ({event,setEvent,distance,setDistance,date,setDate}) =
     const [mode, setMode] = useState('datetime');
 
     const eventItems = [{ label: 'Marathon', value: 'Marathon' },{ label: 'Cyclathon', value: 'Cyclathon' }]
-    const distItems = [{ label: '5K', value: '5K' },{ label: '10K', value: '10K' },{ label: '21K', value: '21K' },{ label: '42K', value: '42K' }]
+    const distItems = [{ label: '1K', value: '1K' },{ label: '2K', value: '5K' },{ label: '5K', value: '5K' },{ label: '10K', value: '10K' },{ label: '21K', value: '21K' },{ label: '42K', value: '42K' }]
     
-
     const onChange = (date) => {
         setShow(false)
         setDate(date) 

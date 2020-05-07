@@ -28,7 +28,7 @@ const placePhoto = (photoReference) => {
 
 const linedata = (data) => {
   let arr = [];
-  let delta = 10;
+  let delta = parseInt(data.length*0.000000001);
   for (let i = 0; i < data.length; i=i+delta) {
     arr.push(data[i]);
   }
@@ -36,7 +36,7 @@ const linedata = (data) => {
         datasets: [
           {
             data: arr,
-            strokeWidth: 1, // optional
+            strokeWidth: 6, // optional
           },
         ],
     }
@@ -172,7 +172,7 @@ const Analysis= ({ route, navigation }) => {
             <CardItem cardBody>
             <View>
                 <Text style={{fontSize:20,textDecorationLine:"underline",textAlign:"center", fontWeight:"bold", color:"#F0200F"}}>
-                 Your Distance throughout the interval
+                 Your Distance throughout the interval.
                 </Text>
                 {getLineGraph(distance,"km")}
             </View>

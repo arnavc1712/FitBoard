@@ -31,7 +31,7 @@ const PastEvents = ({user, navigation}) => {
                                 .doc(myid)
                                 .onSnapshot(documentSnapshot => {
                                     setUserData(documentSnapshot.data())
-                                    setParticipatingEvents(documentSnapshot.data().finishedEvents)
+                                    setParticipatingEvents(documentSnapshot.data().participatingEvents)
                                     
                                 });
                 return subscriber;
@@ -52,7 +52,8 @@ const PastEvents = ({user, navigation}) => {
                                                 .onSnapshot(querySnapshot=>{
                                                     let eventsData= []
                                                     querySnapshot.forEach(doc=>{
-                                                        if(participatingEvents.includes(doc.id)){
+                                                        let event = doc.data();
+                                                        if(event.isFinished && participatingEvents.includes(doc.id)){
                                                             eventsData.push({...doc.data(),id:doc.id})
                                                         }
                                                     })

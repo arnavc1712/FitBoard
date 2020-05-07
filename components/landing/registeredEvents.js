@@ -44,7 +44,8 @@ const RegisteredEvents = ({user, navigation}) => {
                                                 .onSnapshot(querySnapshot=>{
                                                     let eventsData= []
                                                     querySnapshot.forEach(doc=>{
-                                                        if(participatingEvents.includes(doc.id)){
+                                                        let event = doc.data();
+                                                        if(!event.isFinished && participatingEvents.includes(doc.id)){
                                                             eventsData.push({...doc.data(),id:doc.id})
                                                         }
                                                     })

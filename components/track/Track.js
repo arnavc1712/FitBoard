@@ -34,13 +34,16 @@ import { abs } from "react-native-reanimated";
 import configs from '../../conf.json'
 import MapViewDirections from 'react-native-maps-directions';
 import { radialArea } from "d3-shape";
+import CountDown from 'react-native-countdown-component';
+//import CountDown to show the timer
+import moment from 'moment';
 const randomColor = require('randomcolor'); // import the script
 
 
 const LATITUDE_DELTA = 0.0009;
 const LONGITUDE_DELTA = 0.0009;
-const START_LATITUDE_DELTA = 0.00009;
-const START_LONGITUDE_DELTA = 0.00009;
+const START_LATITUDE_DELTA = 0.009;
+const START_LONGITUDE_DELTA = 0.009;
 const FINISH_LONGITUDE_DELTA = 0.00009;
 const FINISH_LATITUDE_DELTA = 0.00009;
 const LATITUDE = 37.78825;
@@ -62,7 +65,7 @@ const  Track = ({route, navigation}) =>{
   const [routeTravelledCoordinates, setRouteTravelledCoordinates] = useState([]);
   const [distanceTravelled, setDistanceTravelled] = useState([]);
   const [totalDistanceTravelled, setTotalDistanceTravelled] = useState(0);
-  const [routeColor, setRouteColor] = useState('#000');
+  const [routeColor, setRouteColor] = useState('#C266FF');
   const [atStartLocation, setatStartLocation] = useState(false);
   const [myid, setmyid] = useState(null);
   const [otherPlayersLocation, setOtherPlayerLocation] = useState({});
@@ -70,6 +73,7 @@ const  Track = ({route, navigation}) =>{
   const [travelledRouteColor, setTravelledRouteColor] = useState(randomColor());
   const [currentPosition, setCurrentPosition] = useState(0);
   const [finished, setFinished] = useState(false); 
+  const [timer, setTimer] = useState("00 H:00 M:00 S");
   const [coordinate, setCoordinate] = useState(new AnimatedRegion({
             latitude: LATITUDE,
             longitude: LONGITUDE,
@@ -121,9 +125,9 @@ const  Track = ({route, navigation}) =>{
                                                             rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition})
                                                               },{merge:true})
           console.log("Setting the finished eventid");
-          firestore().collection('Users').doc(stateRef.current.myid).set({
-            finishedEvents: firestore.FieldValue.arrayUnion(eventid)
-          },{merge:true});
+          // firestore().collection('Users').doc(stateRef.current.myid).set({
+          //   finishedEvents: firestore.FieldValue.arrayUnion(eventid)
+          // },{merge:true});
         }
       }
       catch(err){
@@ -180,7 +184,7 @@ const  Track = ({route, navigation}) =>{
                 } else {
                 // console.log('Event data:', doc.data());
                 setEventData(doc.data());
-                setRouteColor(randomColor());
+                // setRouteColor(randomColor());
             }
         })
         .catch(err => {
@@ -343,8 +347,7 @@ const  Track = ({route, navigation}) =>{
           zoomEnabled={true}
         >
           {
-          stateRef.current.eventData && 
-          <Fragment>
+          stateRef.current.eventData && <Fragment>
               <Marker 
                   title="Start"
                   coordinate = {stateRef.current.eventData.source}
@@ -356,7 +359,7 @@ const  Track = ({route, navigation}) =>{
                   coordinate = {{'latitude':latitude, 'longitude':longitude}}
                   pinColor = {randomColor()}
               />
-              {/* {stateRef.current.atStartLocation && */}
+              {stateRef.current.atStartLocation &&
               <MapViewDirections
                 origin={stateRef.current.eventData.source}
                 destination={stateRef.current.eventData.destination}
@@ -365,8 +368,8 @@ const  Track = ({route, navigation}) =>{
                 strokeWidth={6}
                 strokeColor={routeColor}
             />
-              {/* } */}
-            {/* {!stateRef.current.atStartLocation &&
+              }
+            {!stateRef.current.atStartLocation &&
               <MapViewDirections
                 origin={{'latitude':latitude, 'longitude':longitude}}
                 destination={stateRef.current.eventData.source}
@@ -375,7 +378,7 @@ const  Track = ({route, navigation}) =>{
                 strokeWidth={6}
                 strokeColor={routeColor}
             />
-              } */}
+              }
               <Marker 
                   title="Finish"
                   coordinate = {stateRef.current.eventData.destination}
@@ -392,11 +395,18 @@ const  Track = ({route, navigation}) =>{
               }
   
           </Fragment>
-       }
+          }
   
-  
+
   
       </MapView>
+      {stateRef.current.atStartLocation &&
+      <Fragment>
+      <View style={styles.timerContainer}>
+        <Text style={styles.timer}>Timer</Text>
+        </View>
+
+
         <View style={styles.statsContainer}>
         <Text style={styles.stats}>
             Position : {parseInt(currentPosition) / (Object.keys(otherPlayersLocation) ? Object.keys(otherPlayersLocation).length+1 : 0)}
@@ -408,11 +418,14 @@ const  Track = ({route, navigation}) =>{
             Speed : {parseFloat(currentSpeed).toFixed(2)} km/hr
           </Text>
         </View>
+        </Fragment>
+    }
         {!stateRef.current.atStartLocation && 
         <View style={{width:300, textAlign:'center', padding:10}}>
-          <Text style={styles.notStarted}>Move to the start location !</Text>
+          <Text style={styles.notStarted}>Move to the start location</Text>
         </View>
       }
+
       </View>
       )
 
@@ -551,16 +564,29 @@ const styles = StyleSheet.create({
     },
     statsContainer:{
         position:'absolute',
-        top: 10,
+        bottom: 30,
         right: 10,
         padding: 10,
         justifyContent: "flex-end",
-        backgroundColor: "#F83FFF",
+        backgroundColor: "#6AA5FF",
         borderRadius: 5,
         borderWidth: 2,
         borderColor: "black",
         // opacity: 0.3,
 
+    },
+    timerContainer:{
+      position:'absolute',
+      top: 30,
+      justifyContent: "center",
+      borderRadius: 5
+
+      // borderWidth: 2,
+      // borderColor: "black",      
+    },
+    timer:{
+      fontVariant: ['tabular-nums'],
+      fontSize:24
     },
     stats: {
       marginVertical: 5,
@@ -568,7 +594,7 @@ const styles = StyleSheet.create({
       fontSize: 18,
     },
     notStarted:{
-      color: 'red',
+      color: '#C266FF',
       fontSize: 20,
       marginBottom:30,
       marginLeft:10,

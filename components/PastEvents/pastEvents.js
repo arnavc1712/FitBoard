@@ -94,7 +94,7 @@ const PastEvents = ({user, navigation}) => {
 
     const onStart = (event) => {
         console.log("Event start clicked ", event);
-        navigation.navigate('Events',{screen:'EventSummary',params:{                                                              
+        navigation.navigate('EventMenu',{screen:'EventSummary',params:{                                                              
             myid : myid, 
             eventId: event.id
           }

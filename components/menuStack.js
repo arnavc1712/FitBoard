@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from "./landing"
 import Wizard from './wizard/wizard'
 import ShowEvents from './registerEvents/showEvents'
-import Track from './track/Track';
+import Track from './track';
 const Stack = createStackNavigator();
 
 const MenuStack = ({navigation,route}) => {

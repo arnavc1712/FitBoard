@@ -97,6 +97,8 @@ const Wizard = ({navigation,route}) => {
                     waypoints:selectedPath,
                     creator:user["email"],
                     registeredUsers:[user["email"]],
+                    state:"created",
+                    rankings:[],
                     createdAt:new Date()
                 })
                 let userData = await userColl.doc(user["email"]).get()

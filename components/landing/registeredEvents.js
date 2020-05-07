@@ -45,7 +45,7 @@ const RegisteredEvents = ({user, navigation}) => {
                                                     let eventsData= []
                                                     querySnapshot.forEach(doc=>{
                                                         let event = doc.data();
-                                                        if(!event.isFinished && participatingEvents.includes(doc.id)){
+                                                        if(event.state!="finished" && participatingEvents.includes(doc.id)){
                                                             eventsData.push({...doc.data(),id:doc.id})
                                                         }
                                                     })
@@ -81,7 +81,7 @@ const RegisteredEvents = ({user, navigation}) => {
 
     const onStart = (event) => {
         console.log("Event start clicked ", event);
-        navigation.navigate('MenuStack',{screen:'Track', params:{eventId: event.id}});
+        navigation.navigate('MenuStack',{screen:'TrackStack', params:{eventId: event.id}});
         
     }
 
@@ -100,10 +100,10 @@ const RegisteredEvents = ({user, navigation}) => {
                     </Left>
                     <Right style={{flex:1}}>
     
-                    { !event.started &&
+                    { event.state=="created" &&
                     <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
                     }
-                    {event.started &&
+                    {(event.state=="starting"||event.state=="started") &&
                     <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>Participate</Text></Button>
                     }
                     </Right>

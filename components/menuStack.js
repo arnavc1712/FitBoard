@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from "./landing"
 import Wizard from './wizard/wizard'
 import ShowEvents from './registerEvents/showEvents'
-import Track from './track';
+import TrackStack from './track/';
 const Stack = createStackNavigator();
 
 const MenuStack = ({navigation,route}) => {
@@ -14,7 +14,7 @@ const MenuStack = ({navigation,route}) => {
            <Stack.Screen name="Menu" component={ProfileScreen} options={{header: () => null}}/>
            <Stack.Screen name="Wizard" component={Wizard}/>
            <Stack.Screen name="ShowEvents" component={ShowEvents}/>
-           <Stack.Screen name="Track" component={Track} initialParams = {route.params}/>
+           <Stack.Screen name="TrackStack" component={TrackStack} options={{header: () => null}}/>
        </Stack.Navigator>
        
     )

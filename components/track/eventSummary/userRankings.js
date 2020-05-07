@@ -16,7 +16,7 @@ const renderRow = (name,rank) => {
                         styles.singleDidget
                     ]}
                 >
-                {rank}
+                {rank+1}
                 </Text>
                 <Image
                 source={{uri:'https://gravatar.com/avatar/4ba68791d1b4fd930b6c4ef84b197293?s=400&d=robohash&r=x'}}

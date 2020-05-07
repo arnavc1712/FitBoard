@@ -2,25 +2,33 @@ import React,{useState,useEffect} from 'react'
 import {List,ListItem,Left,Right,Text,Icon,Button,Toast} from 'native-base'
 import {View,StyleSheet} from 'react-native'
 import firestore from '@react-native-firebase/firestore';
-import EventScreen from './eventInfo';
+import auth from '@react-native-firebase/auth';
+// import EventScreen from './eventInfo';
 import Modal from 'react-native-modal';
 
-const RegisteredEvents = ({user, navigation}) => {
+const PastEvents = ({user, navigation}) => {
     const eventColl = firestore().collection('Events')
     const userColl = firestore().collection('Users')
     const [userData,setUserData] = useState(null)
+    const [myid, setmyid] = useState(null);
     const [currEvent,setCurrEvent] = useState({})
     const [eventList,setEventList] = useState([])
     const [showModal,setShowModal] = useState(false)
     const [participatingEvents,setParticipatingEvents] = useState([])
 
+
+    useEffect(() => {
+        console.log("Getting current user");
+        getCurrentUser();
+    })
+    
     useEffect(()=>{
         try{
-            if(user){
+            if(myid){
                 // setUser(user)
                 const subscriber = firestore()
                             .collection('Users')
-                                .doc(user["email"])
+                                .doc(myid)
                                 .onSnapshot(documentSnapshot => {
                                     setUserData(documentSnapshot.data())
                                     setParticipatingEvents(documentSnapshot.data().participatingEvents)
@@ -34,7 +42,7 @@ const RegisteredEvents = ({user, navigation}) => {
         }
         
 
-    },[user])
+    },[myid])
 
 
     useEffect(()=>{
@@ -45,7 +53,7 @@ const RegisteredEvents = ({user, navigation}) => {
                                                     let eventsData= []
                                                     querySnapshot.forEach(doc=>{
                                                         let event = doc.data();
-                                                        if(!event.isFinished && participatingEvents.includes(doc.id)){
+                                                        if(event.isFinished && participatingEvents.includes(doc.id)){
                                                             eventsData.push({...doc.data(),id:doc.id})
                                                         }
                                                     })
@@ -55,7 +63,12 @@ const RegisteredEvents = ({user, navigation}) => {
         
     },[participatingEvents])
 
-  
+    const getCurrentUser = () => {
+        auth().onAuthStateChanged((user) =>{
+          // console.log("Current User ", user);
+          setmyid(user.email);
+        })
+      }
 
     const onUnregister = async (event) => {
         try{
@@ -81,16 +94,21 @@ const RegisteredEvents = ({user, navigation}) => {
 
     const onStart = (event) => {
         console.log("Event start clicked ", event);
-        navigation.navigate('MenuStack',{screen:'Track', params:{eventId: event.id}});
+        navigation.navigate('Events',{screen:'EventSummary',params:{                                                              
+            myid : myid, 
+            eventId: event.id
+          }
+          
+        });
         
     }
 
-    
+    console.log(eventList, participatingEvents);
     return(
         <View>
             <List>
                 <ListItem itemHeader first style={styles.listHeader}>
-                <Text style={styles.listHeaderText}>UPCOMING EVENTS</Text>
+                <Text style={styles.listHeaderText}>PAST EVENTS</Text>
                 </ListItem>
 
                 {eventList.map(event => 
@@ -100,11 +118,8 @@ const RegisteredEvents = ({user, navigation}) => {
                     </Left>
                     <Right style={{flex:1}}>
     
-                    { !event.started &&
-                    <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
-                    }
                     {event.started &&
-                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>Participate</Text></Button>
+                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>View</Text></Button>
                     }
                     </Right>
                 </ListItem>
@@ -112,7 +127,7 @@ const RegisteredEvents = ({user, navigation}) => {
 
                 
             </List>
-
+{/* 
             <Modal
             isVisible={showModal}
             onBackdropPress={()=>setShowModal(false)}
@@ -125,7 +140,7 @@ const RegisteredEvents = ({user, navigation}) => {
             backdropTransitionInTiming={600}
             backdropTransitionOutTiming={600}>
                 <EventScreen event={currEvent} onUnregister={onUnregister}/>
-            </Modal>
+            </Modal> */}
         </View>
     )
 }
@@ -140,4 +155,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default RegisteredEvents
+export default PastEvents

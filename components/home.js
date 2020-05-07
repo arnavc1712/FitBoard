@@ -14,7 +14,8 @@ import LogoutScreen from './authentication/logout';
 import viewMaps from './viewMaps';
 import MenuStack from './menuStack';
 import auth from '@react-native-firebase/auth';
-import TrackMenu from './track/trackMenuStack';
+import Events from './track/trackMenuStack';
+
 import ProfileScreen from './landing';
 import messaging from '@react-native-firebase/messaging'
 
@@ -55,17 +56,25 @@ const Home = ({navigation,route}) => {
 					barStyle={{ backgroundColor: 'white' }}
 			>
 				<Tab.Screen name="MenuStack" component={MenuStack} options={{
-          tabBarLabel: 'Profile',
+          tabBarLabel: 'Dashboard',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={26} />
+            <MaterialCommunityIcons name="view-dashboard" color={color} size={26} />
           ),
         }}/>
-		      <Tab.Screen name="TrackMenu" component={TrackMenu} options={{
+		      {/* <Tab.Screen name="TrackMenu" component={TrackMenu} options={{
           tabBarLabel: 'Track',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="map" color={color} size={26} />
           ),
+        }}/> */}
+
+		<Tab.Screen name="Events" component={Events} options={{
+          tabBarLabel: 'Events',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="history" color={color} size={26} />
+          ),
         }}/>
+
 						<Tab.Screen name="Logout" component={LogoutScreen} 
 					
 		        			listeners={{ tabPress: e => {

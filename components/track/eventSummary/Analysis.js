@@ -27,11 +27,16 @@ const placePhoto = (photoReference) => {
 
 
 const linedata = (data) => {
+  let arr = [];
+  let delta = parseInt(data.length*0.000000001);
+  for (let i = 0; i < data.length; i=i+delta) {
+    arr.push(data[i]);
+  }
     return {
         datasets: [
           {
-            data: data,
-            strokeWidth: 1, // optional
+            data: arr,
+            strokeWidth: 6, // optional
           },
         ],
     }
@@ -58,6 +63,8 @@ const linedata = (data) => {
             width={Dimensions.get('window').width-5} // from react-native
             height={200}
             yAxisSuffix={ysuffix}
+            xAxisInterval={100}
+            fromZero={true}
             chartConfig={{
             backgroundColor: '#000',
             backgroundGradientFrom: '#191AA4',
@@ -156,16 +163,16 @@ const Analysis= ({ route, navigation }) => {
             </CardItem>
             <CardItem cardBody>
             <View>
-                <Text style={{fontSize:20,textDecorationLine:"underline",textAlign:"center"}}>
-                    Variation of speed over the course of event
+                <Text style={{fontSize:20,textDecorationLine:"underline",textAlign:"center", fontWeight:"bold", color:"#F0200F"}}>
+                    Your Speed throughout the interval.
                 </Text>
                 {getLineGraph(speed, "k/h")}
             </View>
             </CardItem>
             <CardItem cardBody>
             <View>
-                <Text style={{fontSize:20,textDecorationLine:"underline",textAlign:"center"}}>
-                    Distance travelled over the course of event
+                <Text style={{fontSize:20,textDecorationLine:"underline",textAlign:"center", fontWeight:"bold", color:"#F0200F"}}>
+                 Your Distance throughout the interval.
                 </Text>
                 {getLineGraph(distance,"km")}
             </View>

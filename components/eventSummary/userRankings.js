@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react'
 import firestore from '@react-native-firebase/firestore';
 import {View,StyleSheet,Image,FlatList,Text} from 'react-native'
+import {Left,Right} from 'native-base'
 
 const oddRowColor = "white";
 const evenRowColor = "#f2f5f7";
@@ -23,8 +24,11 @@ const renderRow = (name,rank) => {
                 style={[styles.avatar]}
                 />
                 <Text style={[styles.label]} numberOfLines={1}>
-                    {name}
+                    {name.split('@')[0]}
                 </Text>
+                <Right>
+                    <Text style={styles.time}>18:45</Text>
+                </Right>
 
             </View>
       </View>
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
         borderColor: "#d6d7da"
       },
       label: {
-        fontSize: 17,
+        fontSize: 18,
         flex: 1,
         paddingRight: 80
       },
@@ -97,6 +101,13 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center"
     },
+    time:{
+        marginRight:30,
+        fontSize:16,
+        color:'#b0003a',
+        fontWeight:'bold',
+        fontFamily:'roboto'
+    }
 })
 
 

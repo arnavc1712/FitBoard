@@ -4,7 +4,7 @@ import {View,StyleSheet} from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 // import EventScreen from './eventInfo';
-import Modal from 'react-native-modal';
+import customStyles from '../../styles.json'
 
 const PastEvents = ({user, navigation}) => {
     const eventColl = firestore().collection('Events')
@@ -118,27 +118,14 @@ const PastEvents = ({user, navigation}) => {
                     </Left>
                     <Right style={{flex:1}}>
     
-                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>View</Text></Button>
+                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text style={styles.text}>View</Text></Button>
                     </Right>
                 </ListItem>
                 )}
 
                 
             </List>
-{/* 
-            <Modal
-            isVisible={showModal}
-            onBackdropPress={()=>setShowModal(false)}
-            backdropColor="#FFF"
-            backdropOpacity={1}
-            animationIn="zoomInDown"
-            animationOut="zoomOutUp"
-            animationInTiming={600}
-            animationOutTiming={600}
-            backdropTransitionInTiming={600}
-            backdropTransitionOutTiming={600}>
-                <EventScreen event={currEvent} onUnregister={onUnregister}/>
-            </Modal> */}
+
         </View>
     )
 }
@@ -149,6 +136,18 @@ const styles = StyleSheet.create({
     },
     listHeaderText:{
         fontSize:20,
+        fontWeight:'bold'
+    },
+    button:{
+        borderColor:customStyles.borderedButton.color,
+        borderBottomWidth:customStyles.borderedButton.width,
+        borderTopWidth:customStyles.borderedButton.width,
+        borderLeftWidth:customStyles.borderedButton.width,
+        borderRightWidth:customStyles.borderedButton.width,
+        
+    },
+    text:{
+        color:customStyles.borderedButton.textColor,
         fontWeight:'bold'
     }
 })

@@ -18,6 +18,7 @@ import EventMenu from './PastEvents';
 
 import ProfileScreen from './landing';
 import messaging from '@react-native-firebase/messaging'
+import customStyles from '../styles.json'
 
 
 const logout = async () => {
@@ -51,7 +52,7 @@ const Home = ({navigation,route}) => {
 		
 		return(
 			<Tab.Navigator
-					activeColor='#ba68c8'
+					activeColor={customStyles.tabs.color}
 					inactiveColor='gray'
 					barStyle={{ backgroundColor: 'white' }}
 			>

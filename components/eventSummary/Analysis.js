@@ -10,6 +10,11 @@ import firestore from '@react-native-firebase/firestore';
 import { Dimensions } from 'react-native';
 import configs from "../../conf.json"
 import {getDistance} from '../track/getDistanceOfUsers';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faCheckSquare, faCoffee,faCheck,faTimesCircle, faCheckCircle,faMapMarkerAlt,faAward,faCalendar,faClock, } from '@fortawesome/free-solid-svg-icons'
+import { library } from "@fortawesome/fontawesome-svg-core";
+import moment from 'moment'
+library.add(faAward);
 
 import {
     LineChart,
@@ -67,10 +72,10 @@ const linedata = (data) => {
             fromZero={true}
             chartConfig={{
             backgroundColor: '#000',
-            backgroundGradientFrom: '#191AA4',
-            backgroundGradientTo: '#ffa726',
+            backgroundGradientFrom: 'white',
+            backgroundGradientTo: 'white',
             decimalPlaces: 2, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            color: (opacity = 1) => "#ec407a",
             style: {
                 borderRadius: 5,
                 padding:5
@@ -153,26 +158,29 @@ const Analysis= ({ route, navigation }) => {
               <Left>
                 <Thumbnail source={{uri: placePhoto(eventData.photoReference)}} />
                 <Body >
-                <Text style={{fontSize:20}}>Position : {currentPosition} / {totalPlayers}</Text>
-                <Text note style={{fontSize:16}}>Event Location : {eventData.locationName}</Text>
-                <Text note style={{fontSize:16}}>Event Date : {getDate(eventData.timestamp._seconds)}</Text>
-                <Text note style={{fontSize:16}}>Event Distance : {eventData.distance}</Text>
-                <Text note style={{fontSize:16}}>Event Type: {eventData.type}</Text>
+       
+                        
+                <Text style={{fontSize:20}}> <FontAwesomeIcon icon={faAward} size={17} style={{color:'#2196f3',marginBottom:10,alignSelf:'center'}}/> {currentPosition} / {totalPlayers}</Text>
+                <Text note style={{fontSize:16}}><FontAwesomeIcon icon={faMapMarkerAlt} size={17} style={{color:'#2196f3',marginBottom:10,alignSelf:'center'}}/> {eventData.locationName}</Text>
+                <Text note style={{fontSize:16}}><FontAwesomeIcon icon={faCalendar} size={17} style={{color:'#2196f3',marginBottom:10,alignSelf:'center'}}/> {moment(eventData.timestamp.toDate()).format("Do MMM YYYY")}</Text>
+                <Text note style={{fontSize:16}}><FontAwesomeIcon icon={faClock} size={17} style={{color:'#2196f3',marginBottom:10,alignSelf:'center'}}/> {moment(eventData.timestamp.toDate()).format("hh:mm a ([MST])")}</Text>
+                <Text note style={{fontSize:16}}>Distance: {eventData.distance}</Text>
+                <Text note style={{fontSize:16}}>Type: {eventData.type}</Text>
                 </Body>
               </Left>
             </CardItem>
-            <CardItem cardBody>
+            <CardItem cardBody style={{marginLeft:20}}>
             <View>
-                <Text style={{fontSize:20,textDecorationLine:"underline",textAlign:"center", fontWeight:"bold", color:"#F0200F"}}>
-                    Your Speed throughout the interval.
+                <Text style={{fontSize:20,fontWeight:"bold", color:"#F0200F"}}>
+                    SPEED
                 </Text>
                 {getLineGraph(speed, "k/h")}
             </View>
             </CardItem>
             <CardItem cardBody>
             <View>
-                <Text style={{fontSize:20,textDecorationLine:"underline",textAlign:"center", fontWeight:"bold", color:"#F0200F"}}>
-                 Your Distance throughout the interval.
+                <Text style={{fontSize:20,fontWeight:"bold", color:"#F0200F"}}>
+                 DISTANCE
                 </Text>
                 {getLineGraph(distance,"km")}
             </View>

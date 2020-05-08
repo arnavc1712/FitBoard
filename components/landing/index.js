@@ -9,6 +9,7 @@ import auth from '@react-native-firebase/auth';
 import configs from "../../conf.json"
 import messaging from '@react-native-firebase/messaging';
 import RegisteredEvents from './registeredEvents'
+import customStyles from '../../styles.json'
 
 
 const ProfileScreen = ({navigation}) => {
@@ -103,6 +104,7 @@ const styles = StyleSheet.create({
         height:50,
         alignSelf:'center',
         margin:10,
+        backgroundColor:customStyles.solidButton.color
     },
     scroll:{
         backgroundColor:'white'

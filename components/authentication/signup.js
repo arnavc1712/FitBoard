@@ -11,6 +11,7 @@ import Modal from "react-native-modal";
 
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import customStyles from '../../styles.json'
 
 const SignupScreen = (props) => {
 
@@ -79,7 +80,7 @@ const SignupScreen = (props) => {
                       <Label>Email ID</Label>
                       <Input value={email} onChangeText={val => setEmail(val)}/>
                     </FormItem>
-                    <FormItem floatingLabel last style={styles.item}>
+                    <FormItem floatingLabel style={styles.item}>
                       <Label>Password</Label>
                       <Input value={password} secureTextEntry={true} onChangeText={val => setPassword(val)}/>
                     </FormItem>
@@ -103,15 +104,17 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent : 'center'
     },
-  item:{
-    borderBottomWidth:2,
-    borderColor:'#009688'
-  },
+    item:{
+        borderBottomWidth:2,
+        borderColor:customStyles.tabs.color,
+        width:'80%',
+        alignSelf:'center'
+      },
   button:{
     marginTop:15,
     width:"50%",
     alignSelf:'center',
-    backgroundColor:'#009688'
+    backgroundColor:customStyles.solidButton.color
     // flexDirection:'row'
   }
 

@@ -4,7 +4,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {Button,Text,Toast} from 'native-base'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import customStyles from '../../styles.json'
 
 
 
@@ -40,6 +40,7 @@ const EventDetailPicker = ({event,setEvent,distance,setDistance,date,setDate}) =
                             value: null,
                             color: 'red',
                         }}
+                        // style={{backgroundColor:'red'}}
                         items={eventItems}
                         Icon={() => {
                             return <Ionicons  name="md-arrow-down" stylesize={12} color="gray" />
@@ -86,6 +87,7 @@ const styles = StyleSheet.create({
         height:50,
         alignSelf:'center',
         margin:10,
+        backgroundColor:customStyles.solidButton.color
     },
     picker: {
         width:'60%',

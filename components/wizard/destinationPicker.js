@@ -146,7 +146,7 @@ const DestinationPicker = ({currLocation,setCurrLocation,distance,selectedPath,p
                 destination={destination}
                 apikey={configs["mapsDirectionsKey"]}
                 waypoints={selectedPath}
-                strokeWidth={3}
+                strokeWidth={6}
                 strokeColor="hotpink"
             />
             }

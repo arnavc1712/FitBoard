@@ -11,6 +11,7 @@ import { ConfirmDialog } from 'react-native-simple-dialogs';
 import moment from 'moment';
 import messaging from '@react-native-firebase/messaging';
 import Swiper from 'react-native-deck-swiper'
+import customStyles from '../../styles.json'
 
 const mapStyle = [
     {
@@ -65,7 +66,7 @@ const ShowEvents = ({navigation,route}) => {
 
     useEffect(()=>{
         
-        if(user){
+        if(user && userData){
             // setUser(user)
             // console.log(userTopics)
             const subscriber = firestore()
@@ -183,7 +184,7 @@ const ShowEvents = ({navigation,route}) => {
                                         
 
                                         <Right style={{flex:1}}>
-                                            <Button bordered rounded onPress={()=>{setRegisterDialogVisible(true);setCurrEvent(item)}}><Text>Register</Text></Button>
+                                            <Button bordered rounded style={styles.button} onPress={()=>{setRegisterDialogVisible(true);setCurrEvent(item)}}><Text style={styles.text}>Register</Text></Button>
                                             
                                         </Right>
                                 </CardItem>
@@ -199,7 +200,7 @@ const ShowEvents = ({navigation,route}) => {
                     infinite={true}
                     
                     backgroundColor={'#FFF'}
-                    stackSize= {1}>
+                    stackSize= {3}>
                    
                 </Swiper>}
             </View>
@@ -320,6 +321,17 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#F5FCFF"
       },
+      button:{
+        borderColor:customStyles.borderedButton.color,
+        borderBottomWidth:customStyles.borderedButton.width,
+        borderTopWidth:customStyles.borderedButton.width,
+        borderLeftWidth:customStyles.borderedButton.width,
+        borderRightWidth:customStyles.borderedButton.width
+    },
+    text:{
+        color:customStyles.borderedButton.textColor,
+
+    }
 })
 
 export default ShowEvents

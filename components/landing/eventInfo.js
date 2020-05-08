@@ -13,6 +13,7 @@ import moment from 'moment';
 import MapView, { PROVIDER_GOOGLE,Marker,Callout,AnimatedRegion, Animated } from 'react-native-maps';
 
 import MapViewDirections from 'react-native-maps-directions';
+import customStyles from '../../styles.json'
 
 const placePhoto = (photoReference) => {
     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${configs["mapsDirectionsKey"]}`
@@ -31,7 +32,7 @@ const EventScreen = ({event,onUnregister}) => {
                  <List style={{width:'100%'}}>
                     <ListItem icon noBorder>
                             <Left>
-                                <Button style={{ backgroundColor: "#FF9501" }}>
+                                <Button style={{ backgroundColor: customStyles.solidButton.color }}>
                                     <Icon active name="body" />
                                 </Button>
                             </Left>
@@ -41,7 +42,7 @@ const EventScreen = ({event,onUnregister}) => {
                     </ListItem>
                     <ListItem icon noBorder>
                             <Left>
-                                <Button style={{ backgroundColor: "#FF9501" }}>
+                                <Button style={{ backgroundColor:customStyles.solidButton.color}}>
                                     <Icon active name="compass" />
                                 </Button>
                             </Left>
@@ -51,7 +52,7 @@ const EventScreen = ({event,onUnregister}) => {
                     </ListItem>
                     <ListItem icon noBorder>
                         <Left>
-                            <Button style={{ backgroundColor: "#FF9501" }}>
+                            <Button style={{ backgroundColor:customStyles.solidButton.color }}>
                                 <Icon active name="calendar" />
                             </Button>
                         </Left>
@@ -61,7 +62,7 @@ const EventScreen = ({event,onUnregister}) => {
                     </ListItem>
                     <ListItem icon noBorder>
                         <Left>
-                            <Button style={{ backgroundColor: "#FF9501" }}>
+                            <Button style={{ backgroundColor: customStyles.solidButton.color }}>
                                 <Icon active name="time" />
                             </Button>
                         </Left>

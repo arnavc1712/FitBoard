@@ -35,10 +35,10 @@ import MapViewDirections from 'react-native-maps-directions';
 const randomColor = require('randomcolor'); // import the script
 
 
-const LATITUDE_DELTA = 0.0009;
-const LONGITUDE_DELTA = 0.0009;
-const START_LATITUDE_DELTA = 0.0009;
-const START_LONGITUDE_DELTA = 0.0009;
+const LATITUDE_DELTA = 0.009;
+const LONGITUDE_DELTA = 0.009;
+const START_LATITUDE_DELTA = 0.00009;
+const START_LONGITUDE_DELTA = 0.00009;
 const FINISH_LONGITUDE_DELTA = 0.00009;
 const FINISH_LATITUDE_DELTA = 0.00009;
 const LATITUDE = 37.78825;
@@ -95,21 +95,12 @@ const  Track = ({route, navigation}) =>{
                       timerHr: timerHr
                     }
 
-
-     useEffect(() => {
-       console.log("Inside timer");
-        if(stateRef.current.atStartLocation == true){
-          
-          timer = setInterval(updateTimeValues, 1000);
-        }
-        return () => clearTimeout(timer);
-     }, [atStartLocation]);
-
       useEffect(()=>{
           // setEventId(route.params.eventId)
           // savedCallback.settingSpeed = settingSpeed
           // console.log(`Event Id is ${eventid}`)
           if(eventid){
+            
             getCurrentUser();
             populateEventDetail();
             getCurrentLocation();
@@ -117,7 +108,9 @@ const  Track = ({route, navigation}) =>{
             watchPosition();
             getAllDistances();
             listenForUpdate();
+            timer = setInterval(updateTimeValues, 1000);
           }
+        return () => clearTimeout(timer);
             
     },[eventid]);
 
@@ -126,7 +119,7 @@ const  Track = ({route, navigation}) =>{
         if(finished==true){
           let timeVal = `${stateRef.current.timerHr}:${stateRef.current.timerMin}:${stateRef.current.timerSec}`
           firestore().collection("Events").doc(eventid).set({
-                                                            rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition,timer:timeVal})
+                                                            rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition,time:timeVal})
                                                               },{merge:true})
           console.log("Setting the finished eventid");
         }
@@ -416,13 +409,12 @@ const  Track = ({route, navigation}) =>{
 
   
       </MapView>
-      {stateRef.current.atStartLocation &&
-      <Fragment>
+
       <View style={styles.timerContainer}>
         <Text style={styles.timer}>{stateRef.current.timerHr} Hrs : {stateRef.current.timerMin} Mins : {stateRef.current.timerSec} Sec</Text>
       </View>
 
-
+      {stateRef.current.atStartLocation &&
         <View style={styles.statsContainer}>
         <Text style={styles.stats}>
             Position : {parseInt(stateRef.current.currentPosition)}
@@ -434,8 +426,8 @@ const  Track = ({route, navigation}) =>{
             Speed : {parseFloat(currentSpeed).toFixed(2)} km/hr
           </Text>
         </View>
-        </Fragment>
-    }
+       }
+
         {!stateRef.current.atStartLocation && 
         <View style={{width:300, textAlign:'center', padding:10}}>
           <Text style={styles.notStarted}>Move to the start location</Text>

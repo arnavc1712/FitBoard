@@ -66,6 +66,7 @@ const  Track = ({route, navigation}) =>{
   const [travelledRouteColor, setTravelledRouteColor] = useState(randomColor());
   const [currentPosition, setCurrentPosition] = useState(0);
   const [finished, setFinished] = useState(false); 
+  const [alreadyFinished, setAlreadyFinished] = useState(false); 
   const [timerSec, setTimerSec] = useState(0);
   const [timerMin, setTimerMin] = useState(0);
   const [timerHr, setTimerHr] = useState(0);
@@ -92,7 +93,8 @@ const  Track = ({route, navigation}) =>{
                       finished: finished,
                       timerSec: timerSec,
                       timerMin: timerMin,
-                      timerHr: timerHr
+                      timerHr: timerHr,
+                      alreadyFinished: alreadyFinished
                     }
 
       useEffect(()=>{
@@ -100,8 +102,8 @@ const  Track = ({route, navigation}) =>{
           // savedCallback.settingSpeed = settingSpeed
           // console.log(`Event Id is ${eventid}`)
           if(eventid){
-            
             getCurrentUser();
+            checkIfAlreadyFinished();
             populateEventDetail();
             getCurrentLocation();
             // checkIfAtStarted();
@@ -121,6 +123,9 @@ const  Track = ({route, navigation}) =>{
           firestore().collection("Events").doc(eventid).set({
                                                             rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition,time:timeVal})
                                                               },{merge:true})
+          firestore().collection(eventid).doc(stateRef.current.myid).set({
+            finished: true
+              },{merge:true})                                                    
           console.log("Setting the finished eventid");
         }
       }
@@ -130,7 +135,22 @@ const  Track = ({route, navigation}) =>{
     },[finished])
 
 
-
+    const checkIfAlreadyFinished = () => {
+      let query = firestore().collection(eventid).doc(stateRef.current.myid).get()
+      .then(doc => {
+          if (!doc.exists) {
+              // console.log('No Event document');
+              } else {
+              // console.log('Event data:', doc.data());
+              if(doc.data().finished == true)
+                setAlreadyFinished(true);
+              // setRouteColor(randomColor());
+          }
+      })
+      .catch(err => {
+          console.log('Error getting documents', err);
+      });
+    }
 
     const update_firebase_location = (newCoordinate) => {
         
@@ -328,6 +348,7 @@ const  Track = ({route, navigation}) =>{
         // console.log("Current User ", user);
         if(user){
           setmyid(user.email);
+          checkIfAlreadyFinished();
         }
       })
     }
@@ -460,7 +481,7 @@ const  Track = ({route, navigation}) =>{
     const create_finish_alert = () => {
       console.log("Inside create finish alert");
       return (
-        stateRef.current.finished && 
+        (stateRef.current.alreadyFinished || stateRef.current.finished) && 
         <View style={styles.container}>
           {/* <Modal
             animationType="slide"
@@ -497,8 +518,8 @@ const  Track = ({route, navigation}) =>{
 
     }
     return (
-        (!stateRef.current.finished && render_event_map()) || 
-        (stateRef.current.finished && create_finish_alert())
+        (!(stateRef.current.alreadyFinished || stateRef.current.finished) && render_event_map()) || 
+        ((stateRef.current.alreadyFinished || stateRef.current.finished) && create_finish_alert())
     );
 
 }

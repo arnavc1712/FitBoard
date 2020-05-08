@@ -173,7 +173,7 @@ const Analysis= ({ route, navigation }) => {
                 </Grid> 
                 </Body>
             </CardItem>
-            <CardItem cardBody style={{marginLeft:5, marginRight:5, marginTop: 20}}>
+            <CardItem cardBody style={{marginLeft:5, marginRight:5, marginTop: 10}}>
             <View>
                 <Text style={{fontSize:20,fontWeight:"bold", color:"#F0200F", marginBottom:5}}>
                     SPEED
@@ -181,9 +181,9 @@ const Analysis= ({ route, navigation }) => {
                 {getLineGraph(speed, "k/h")}
             </View>
             </CardItem>
-            <CardItem cardBody style={{marginLeft:5, marginRight:5, marginBottom: 5}}>
+            <CardItem cardBody style={{marginLeft:5, marginRight:5}}>
             <View>
-                <Text style={{fontSize:20,fontWeight:"bold", color:"#F0200F"}}>
+                <Text style={{fontSize:20,fontWeight:"bold", color:"#F0200F", marginBottom: 5}}>
                  DISTANCE
                 </Text>
                 {getLineGraph(distance,"km")}

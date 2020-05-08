@@ -10,6 +10,7 @@ import auth from '@react-native-firebase/auth';
 import {GetPaths} from '../../utils/getPaths'
 import GetLocation from 'react-native-get-location'
 import messaging from '@react-native-firebase/messaging';
+import customStyles from '../../styles.json'
 
 const defaultScrollViewProps = {
     keyboardShouldPersistTaps: 'handled',
@@ -154,8 +155,8 @@ const Wizard = ({navigation,route}) => {
     }
     return (
         <View style={{flex: 1}}>
-            <ProgressSteps>
-                <ProgressStep label="Event Details" scrollViewProps={defaultScrollViewProps} onNext={onDateNext} errors={errors}>
+            <ProgressSteps activeStepIconBorderColor={customStyles.tabs.color} completedProgressBarColor={customStyles.tabs.color} activeLabelColor={customStyles.tabs.color} activeStepNumColor="#673AB7" completedStepIconColor={customStyles.tabs.color}>
+                <ProgressStep label="Event Details" scrollViewProps={defaultScrollViewProps} onNext={onDateNext} errors={errors} nextBtnTextStyle={{color:customStyles.tabs.color}} previousBtnTextStyle={{color:customStyles.tabs.color}}>
                     <EventDetailPicker
                         event={event}
                         setEvent={setEvent}
@@ -166,7 +167,7 @@ const Wizard = ({navigation,route}) => {
                     />
                    
                 </ProgressStep>
-                <ProgressStep label="Choose Path" scrollViewProps={defaultScrollViewProps} onNext={onChoosePathNext} errors={errors}>
+                <ProgressStep label="Choose Path" scrollViewProps={defaultScrollViewProps} onNext={onChoosePathNext} errors={errors} nextBtnTextStyle={{color:customStyles.tabs.color}} previousBtnTextStyle={{color:customStyles.tabs.color}}>
                         <DestinationPicker 
                             currLocation={currLocation}
                             setCurrLocation={setCurrLocation}
@@ -186,7 +187,7 @@ const Wizard = ({navigation,route}) => {
                         />
                  
                 </ProgressStep>
-                <ProgressStep label="Summary" scrollViewProps={defaultScrollViewProps} onSubmit={() => createEvent()}>
+                <ProgressStep label="Summary" scrollViewProps={defaultScrollViewProps} onSubmit={() => createEvent()} nextBtnTextStyle={{color:customStyles.tabs.color}} previousBtnTextStyle={{color:customStyles.tabs.color}}>
                     <Summary date={date} distance = {distance} event={event} currLocation={currLocation}/>
                 </ProgressStep>
             </ProgressSteps>

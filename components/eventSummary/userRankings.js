@@ -17,7 +17,7 @@ const renderRow = (name,rank, time) => {
                         styles.singleDidget
                     ]}
                 >
-                {rank}
+                {rank+1}
                 </Text>
                 <Image
                 source={{uri:'https://gravatar.com/avatar/4ba68791d1b4fd930b6c4ef84b197293?s=400&d=robohash&r=x'}}
@@ -35,6 +35,10 @@ const renderRow = (name,rank, time) => {
     )
 }
 
+const getTotalTime = (hour,min,sec) => {
+    return ((hour*3600) + (min*60) + sec)
+}
+
 const UserRankings = ({route}) => {
     // const eventId = route.params.eventid
     const {eventId,myid} = route.params
@@ -44,7 +48,20 @@ const UserRankings = ({route}) => {
             {
                 console.log(documentSnapshot.data())
                 let rankings = documentSnapshot.data().rankings
-                rankings.sort((a, b) => (parseInt(a.position) > parseInt(b.position)) ? 1 : -1)
+                rankings.sort((a, b) => {
+                    let [hour_a,minute_a,sec_a] = a.time.split(":")
+                    let [hour_b,minute_b,sec_b] = b.time.split(":")
+                    let a_time = getTotalTime(parseInt(hour_a),parseInt(minute_a),parseInt(sec_a))
+                    let b_time = getTotalTime(parseInt(hour_b),parseInt(minute_b),parseInt(sec_b))
+
+                    if(a_time > b_time){
+                        return 1
+                    }
+                    else{
+                        return -1
+                    }
+                }
+                )
                 rankings = rankings.filter(obj=>obj.user!=null && obj.position!=null)
                 setRankings(rankings)
                 
@@ -54,8 +71,8 @@ const UserRankings = ({route}) => {
 
     return(
         <View>
-            {rankings.map(obj => 
-                renderRow(obj.user,obj.position, obj.time))
+            {rankings.map((obj,index) => 
+                renderRow(obj.user,index, obj.time))
                 }
         </View>
     )

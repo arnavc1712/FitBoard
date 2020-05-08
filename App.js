@@ -57,8 +57,8 @@ const App = () => {
     }
     else{
       renderedComponent = <React.Fragment>
-                              <Stack.Screen name="Login" component={LoginScreen} options={{headerStyle:{backgroundColor:'#00695C'},headerTintColor:'white'}}/>
-                              <Stack.Screen name="Signup" component={SignupScreen} options={{headerStyle:{backgroundColor:'#00695C'},headerTintColor:'white'}}/>
+                              <Stack.Screen name="Login" component={LoginScreen} options={{headerStyle:{backgroundColor:'#C2185B'},headerTintColor:'white'}}/>
+                              <Stack.Screen name="Signup" component={SignupScreen} options={{headerStyle:{backgroundColor:'#C2185B'},headerTintColor:'white'}}/>
                           </React.Fragment>
     }
 

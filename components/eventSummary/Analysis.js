@@ -28,7 +28,7 @@ const placePhoto = (photoReference) => {
 
 const linedata = (data) => {
   let arr = [];
-  let delta = parseInt(data.length*0.000000001);
+  let delta = parseInt(data.length*0.000000000001);
   for (let i = 0; i < data.length; i=i+delta) {
     arr.push(data[i]);
   }

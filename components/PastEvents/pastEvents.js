@@ -53,7 +53,7 @@ const PastEvents = ({user, navigation}) => {
                                                     let eventsData= []
                                                     querySnapshot.forEach(doc=>{
                                                         let event = doc.data();
-                                                        if(event.isFinished && participatingEvents.includes(doc.id)){
+                                                        if(event.state=="finished" && participatingEvents.includes(doc.id)){
                                                             eventsData.push({...doc.data(),id:doc.id})
                                                         }
                                                     })
@@ -119,7 +119,6 @@ const PastEvents = ({user, navigation}) => {
                     <Right style={{flex:1}}>
     
                     <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>View</Text></Button>
-                    
                     </Right>
                 </ListItem>
                 )}

@@ -1,0 +1,14 @@
+{
+    "solidButton":{
+        "color":"#ec407a"
+    },
+    "tabs":{
+        "color":"#039be5"
+    },
+    "borderedButton":{
+        "textColor":"#9c27b0",
+         "width":2,
+         "color":"#9c27b0"
+    }
+
+}

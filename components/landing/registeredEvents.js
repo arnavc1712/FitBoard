@@ -4,6 +4,7 @@ import {View,StyleSheet} from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 import EventScreen from './eventInfo';
 import Modal from 'react-native-modal';
+import customStyles from '../../styles.json'
 
 const RegisteredEvents = ({user, navigation}) => {
     const eventColl = firestore().collection('Events')
@@ -96,15 +97,15 @@ const RegisteredEvents = ({user, navigation}) => {
                 {eventList.map(event => 
                 <ListItem>
                     <Left>
-                        <Text>{event.type} ({event.distance})</Text>
+                        <Text style={{fontWeight:'500',fontSize:20}}>{event.type} ({event.distance})</Text>
                     </Left>
                     <Right style={{flex:1}}>
     
                     { event.state=="created" &&
-                    <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text>View</Text></Button>
+                    <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text style={styles.text}>View</Text></Button>
                     }
                     {(event.state=="starting"||event.state=="started") &&
-                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)}><Text>Participate</Text></Button>
+                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)} style={styles.text}><Text>Participate</Text></Button>
                     }
                     </Right>
                 </ListItem>
@@ -136,6 +137,17 @@ const styles = StyleSheet.create({
     },
     listHeaderText:{
         fontSize:20,
+        fontWeight:'bold'
+    },
+    button:{
+        borderColor:customStyles.borderedButton.color,
+        borderBottomWidth:customStyles.borderedButton.width,
+        borderTopWidth:customStyles.borderedButton.width,
+        borderLeftWidth:customStyles.borderedButton.width,
+        borderRightWidth:customStyles.borderedButton.width
+    },
+    text:{
+        color:customStyles.borderedButton.textColor,
         fontWeight:'bold'
     }
 })

@@ -326,7 +326,9 @@ const  Track = ({route, navigation}) =>{
     const getCurrentUser = () => {
       auth().onAuthStateChanged((user) =>{
         // console.log("Current User ", user);
-        setmyid(user.email);
+        if(user){
+          setmyid(user.email);
+        }
       })
     }
 

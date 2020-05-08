@@ -105,7 +105,7 @@ const RegisteredEvents = ({user, navigation}) => {
                     <Button style={styles.button} bordered rounded onPress={()=>onView(event)}><Text style={styles.text}>View</Text></Button>
                     }
                     {(event.state=="starting"||event.state=="started") &&
-                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)} style={styles.text}><Text>Participate</Text></Button>
+                    <Button style={styles.button} bordered rounded onPress={()=>onStart(event)} ><Text style={styles.text}>Participate</Text></Button>
                     }
                     </Right>
                 </ListItem>

@@ -7,7 +7,7 @@ const oddRowColor = "white";
 const evenRowColor = "#f2f5f7";
 
 
-const renderRow = (name,rank) => {
+const renderRow = (name,rank, time) => {
     return (
     <View style={[styles.row, { backgroundColor: 'white' }]}>
             <View style={styles.left}>
@@ -27,7 +27,7 @@ const renderRow = (name,rank) => {
                     {name.split('@')[0]}
                 </Text>
                 <Right>
-                    <Text style={styles.time}>18:45</Text>
+                    <Text style={styles.time}>{time}</Text>
                 </Right>
 
             </View>
@@ -55,7 +55,7 @@ const UserRankings = ({route}) => {
     return(
         <View>
             {rankings.map(obj => 
-                renderRow(obj.user,obj.position))
+                renderRow(obj.user,obj.position, obj.time))
                 }
         </View>
     )

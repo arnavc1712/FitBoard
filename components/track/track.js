@@ -124,8 +124,9 @@ const  Track = ({route, navigation}) =>{
     useEffect(() => {
       try{
         if(finished==true){
+          let timeVal = `${stateRef.current.timerHr}:${stateRef.current.timerMin}:${stateRef.current.timerSec}`
           firestore().collection("Events").doc(eventid).set({
-                                                            rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition})
+                                                            rankings:firestore.FieldValue.arrayUnion({user:myid,position:currentPosition,timer:timeVal})
                                                               },{merge:true})
           console.log("Setting the finished eventid");
         }

@@ -1,6 +1,7 @@
 ![CreateEvents](git-images/fitboard-landscape.png)
 # FitBoard
-Real Time Marathon/Cyclathon tracking application
+Real Time Marathon/Cyclathon tracking application.<br/>
+Please refer to the [Report](Report.pdf) in order to see our application architecture and how the different components interact with each other. 
 
 ## Features
 ### Creating Events

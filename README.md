@@ -10,13 +10,13 @@ Real Time Marathon/Cyclathon tracking application
 ![RegisterEvents](git-images/register-event.png)
 
 ### Real Time Multiplayer Event Tracking
-![RegisterEvents](git-images/tracking.gif)
+![Tracking](git-images/tracking.gif)
 
-### Event Registration
-![RegisterEvents](git-images/register-event.png)
+### Real Time Leaderboard and Analytics
+![Leaderboard](git-images/analytics.png)
 
-### Event Registration
-![RegisterEvents](git-images/register-event.png)
+### Push Notifications
+![Push Notifications](git-images/push-notif.jpg)
 
 ## Setup Instructions
 - Install node.js and Npm by following these instructions depending on your operating system. (Downloading and installing Node.js and npm)

@@ -1,5 +1,22 @@
+![CreateEvents](git-images/fitboard-landscape.png)
 # FitBoard
 Real Time Marathon/Cyclathon tracking application
+
+## Features
+### Creating Events
+![CreateEvents](git-images/create-event.png)
+
+### Event Registration
+![RegisterEvents](git-images/register-event.png)
+
+### Real Time Multiplayer Event Tracking
+![RegisterEvents](git-images/tracking.gif)
+
+### Event Registration
+![RegisterEvents](git-images/register-event.png)
+
+### Event Registration
+![RegisterEvents](git-images/register-event.png)
 
 ## Setup Instructions
 - Install node.js and Npm by following these instructions depending on your operating system. (Downloading and installing Node.js and npm)
